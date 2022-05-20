@@ -1,6 +1,8 @@
 #ifndef MISSION_HPP
 #define MISSION_HPP
 
+#include "global.hpp"
+
 class Mission
 {
     int coordonates[2];
