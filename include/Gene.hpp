@@ -7,8 +7,10 @@
 class Gene
 {
     Mission mission;
-    Employee Employee;
+    Employee employee;
 
+    void is_affected();
+    void check_specialty();
 };
 
 #endif /*GENE_HPP*/
