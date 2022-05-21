@@ -13,6 +13,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    include/global.hpp
     include/Mission.hpp
     include/Employee.hpp
     include/Gene.hpp

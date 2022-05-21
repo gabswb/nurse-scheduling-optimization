@@ -2,16 +2,17 @@
 #define CHROMOSOME_HPP
 
 #include "Gene.hpp"
+#include "global.hpp"
 #include <vector>
 #include <unistd.h>
 
 class Chromosome
 {
     public:
-    size_t size;
+    int size;
     std::vector<Gene> genes;
     float fitness;
-    size_t n_employees;
+    int n_employees;
 
     bool is_valid();
     void evaluate();

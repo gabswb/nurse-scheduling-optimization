@@ -6,6 +6,7 @@
 
 class Gene
 {
+    public:
     Mission mission;
     Employee employee;
     bool isAffected;
@@ -13,7 +14,6 @@ class Gene
     Gene();
     Gene(Mission m, Employee e);
 
-    public:
     bool is_affected();
     bool check_specialty();
 };
