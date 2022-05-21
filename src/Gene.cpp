@@ -1,9 +1,23 @@
-void Gene::is_affected()
+#include "Gene.hpp"
+
+Gene::Gene()
 {
-    return this.mission != nullptr && this.employee != nullptr;
+    this->isAffected = false;
 }
 
-void Gene::check_specialty()
+Gene::Gene(Mission m, Employee e)
 {
-    return this.mission.specialty == this.employee.specialty;
+    this->mission = m;
+    this->employee = e;
+    this->isAffected = true;
+}
+
+bool Gene::is_affected()
+{
+    return this->isAffected;
+}
+
+bool Gene::check_specialty()
+{
+    return this->mission.specialty == this->employee.specialty;
 }

@@ -7,6 +7,7 @@
 
 class Chromosome
 {
+    public:
     size_t size;
     std::vector<Gene> genes;
     float fitness;

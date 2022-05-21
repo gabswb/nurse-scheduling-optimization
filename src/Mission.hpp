@@ -5,6 +5,7 @@
 
 class Mission
 {
+    public:
     int coordonates[2];
     int day;
     int start;

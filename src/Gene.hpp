@@ -8,9 +8,14 @@ class Gene
 {
     Mission mission;
     Employee employee;
+    bool isAffected;
 
-    void is_affected();
-    void check_specialty();
+    Gene();
+    Gene(Mission m, Employee e);
+
+    public:
+    bool is_affected();
+    bool check_specialty();
 };
 
 #endif /*GENE_HPP*/

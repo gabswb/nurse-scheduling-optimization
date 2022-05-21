@@ -7,6 +7,7 @@
 
 class Employee
 {
+    public:
     int id;
     Specialties specialty;
     Skills skill;
