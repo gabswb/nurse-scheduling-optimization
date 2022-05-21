@@ -4,16 +4,26 @@ project(it45-operation-research VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-file(GLOB 
-    project_SRC
-    "src/*.cpp"
-    "src/*.hpp"
+
+set(SOURCES
+	src/Mission.cpp
+	src/Employee.cpp
+	src/Gene.cpp
+    src/Chromosome.cpp
 )
 
-add_executable(
-    main 
-    ${project_SRC}
-    )
+set(HEADERS
+    include/Mission.hpp
+    include/Employee.hpp
+    include/Gene.hpp
+    include/Chromosome.hpp
+)
+
+include_directories("${CMAKE_SOURCE_DIR}/include")
+
+add_compile_options(-Wall -Wextra)
+
+add_executable(it45-operation-research src/main.cpp ${SOURCES} ${HEADERS})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
