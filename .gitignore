@@ -36,3 +36,6 @@
 
 # Cmake files
 build/**
+
+#Vscode
+.vscode/

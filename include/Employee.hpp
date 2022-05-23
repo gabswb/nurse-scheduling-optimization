@@ -11,8 +11,11 @@ class Employee
     int id;
     Specialties specialty;
     Skills skill;
-    std::vector<Mission> mission;
+    std::vector<Mission> missions;
 
+    Employee();
+    Employee(int id_p, Specialties specialty_p, Skills skill_p);
+    Employee(int id_p, Specialties specialty_p, Skills skill_p, std::vector<Mission> missions_p);
 };
 
 #endif /*EMPLOYEE_HPP*/
