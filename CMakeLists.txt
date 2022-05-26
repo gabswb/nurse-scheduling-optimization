@@ -18,6 +18,7 @@ set(HEADERS
     include/Employee.hpp
     include/Gene.hpp
     include/Chromosome.hpp
+    include/instance.hpp
 )
 
 include_directories("${CMAKE_SOURCE_DIR}/include")

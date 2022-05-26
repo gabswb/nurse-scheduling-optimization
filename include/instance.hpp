@@ -1,0 +1,2 @@
+#define NB_EMPLOYEE 25
+#define NB_MISSION 80
