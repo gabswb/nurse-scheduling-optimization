@@ -4,9 +4,14 @@
 Chromosome::Chromosome()
 {
         this->fitness = 0;
+        /* Initialize every timetables to -1, which means free */
+        for (int i = 0; i < NB_EMPLOYEE; i++)
+                for (int j = 0; j < N_WEEK_DAY; j++)
+                        for (int k = 0; k < N_WORKING_HOURS; k++)
+                                this->employee_timetables[i][j][k] = -1;
 }
 
-Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_EMPLOYEE])
+Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_EMPLOYEE], int distances[NB_MISSION + 1][NB_MISSION + 1])
 {
         int mission_hours, i, lunch_break_count, working_hours;
         int affectation_failed = 0;
@@ -20,7 +25,7 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                 affectation_founded = false;
                 for (int k = 0; k < NB_EMPLOYEE; k++)
                 {
-                        /* Check if specialty compatible */
+                        /* Check if specialties are compatibles */
                         if (employees[k].specialty == missions[j].specialty)
                         {
                                 lunch_break_count = 0;
@@ -35,8 +40,8 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                                 if (is_timetable_compatible)
                                         for (i = missions[j].start_hour; i < missions[j].end_hour; i++)
                                         {
-                                                /* Availability */
-                                                if (this->employee_timetables[employees[k].id][missions[j].day][i])
+                                                /* Check availability */
+                                                if (this->employee_timetables[employees[k].id][missions[j].day][i] >= 0)
                                                         is_timetable_compatible = false;
 
                                                 /* Make sure that the employee has a least 1 hour lunch break */
@@ -49,30 +54,37 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                                                 }
                                         }
 
+                                /* If the mission takes place during a lunch break, make sure that the other is free to have at least 1 jour lunch break */
+                                if (is_timetable_compatible &&
+                                    lunch_break_count > 0 &&
+                                    (this->employee_timetables[employees[k].id][missions[j].day][LUNCH_BREAK_1] >= 0 ||
+                                     this->employee_timetables[employees[k].id][missions[j].day][LUNCH_BREAK_2] >= 0))
+                                        is_timetable_compatible = false;
+
                                 /* Check daily working hours */
                                 if (is_timetable_compatible)
-                                        for (i = 0; i < N_WORKING_HOURS_SLOT; i++)
+                                        for (i = 0; i < N_WORKING_HOURS; i++)
                                         {
-                                                if (this->employee_timetables[employees[k].id][missions[j].day][i])
+                                                if (this->employee_timetables[employees[k].id][missions[j].day][i] >= 0)
                                                         working_hours++;
                                                 if (working_hours > FULL_TIME_WOKRING_HOURS_DAY + DAILY_OVERTIME - (missions[j].end_hour - missions[j].start_hour))
                                                 {
                                                         /* With this mission, the employee would work more than FULL_TIME_WOKRING_HOURS_DAY this day => incompatible */
                                                         is_timetable_compatible = false;
-                                                        i = N_WORKING_HOURS_SLOT;
+                                                        i = N_WORKING_HOURS;
                                                 }
                                         }
 
                                 if (is_timetable_compatible)
                                 {
-                                        /* Affectation */
+                                        /* Gene affectation */
                                         this->genes[j] = Gene(missions[j], employees[k]);
                                         affectation_founded = true;
 
                                         /* Fill the timetable */
                                         for (i = missions[j].start_hour; i < missions[j].end_hour; i++)
                                         {
-                                                this->employee_timetables[employees[k].id][missions[j].day][i] = true;
+                                                this->employee_timetables[employees[k].id][missions[j].day][i] = missions[j].id;
                                         }
 
                                         /* Increment weekly working hours count */
@@ -99,13 +111,7 @@ bool Chromosome::is_valid()
 {
         int i = 0,
             j = 0;
-        /**
-         * @brief Defines whenever an employee is working or not
-         * Each week has N_WEEK_DAY days
-         * Each day has N_WORKING_HOURS_SLOT working hours (from 8 am to 7 pm for instance)
-         *
-         */
-
+        // TODO a finir
         // for (Gene gene : this->genes)
         // {
         //         /* Check that each mission is affected (and is realized by only emlpoyee) and has the right speciality */
@@ -129,7 +135,7 @@ bool Chromosome::is_valid()
                 for (j = 0; j < N_WEEK_DAY; j++)
                 {
                         /* Check that employees have at least one hour lunch break every day (btw 12am and 2 pm) */
-                        if (this->employee_timetables[i][j][LUNCH_BREAK_1] && this->employee_timetables[i][j][LUNCH_BREAK_2])
+                        if (this->employee_timetables[i][j][LUNCH_BREAK_1] >= 0 && this->employee_timetables[i][j][LUNCH_BREAK_2] >= 0)
                                 /* Not valid, the employee is working during the full lunch break */
                                 return false;
                 }
@@ -142,9 +148,8 @@ void Chromosome::display()
 {
         int i;
         for (i = 0; i < NB_MISSION; i++)
-        {
                 this->genes[i].display();
-        }
+
         for (i = 0; i < NB_EMPLOYEE; i++)
         {
                 printf("\n\n\tEmloyee %d", i);
@@ -156,10 +161,10 @@ void Chromosome::display()
         // std::cout << "\ntotal working hours: " << working_hours;
 }
 
-void Chromosome::display_timetable(bool timetable_p[N_WEEK_DAY][N_WORKING_HOURS_SLOT])
+void Chromosome::display_timetable(int timetable_p[N_WEEK_DAY][N_WORKING_HOURS])
 {
         printf("\n    Mon Tue Wed Thu Fri Sat");
-        for (int k = 0; k < N_WORKING_HOURS_SLOT; k++)
+        for (int k = 0; k < N_WORKING_HOURS; k++)
         {
 
                 if (k == LUNCH_BREAK_1 || k == LUNCH_BREAK_2)
@@ -169,6 +174,13 @@ void Chromosome::display_timetable(bool timetable_p[N_WEEK_DAY][N_WORKING_HOURS_
                 else
                         printf("\n%d: ", k);
                 for (int j = 0; j < N_WEEK_DAY; j++)
-                        printf("%d   ", timetable_p[j][k]);
+                        if (timetable_p[j][k] < 0)
+                                printf("-    ");
+                        else if (timetable_p[j][k] < 10)
+                                printf("%d    ", timetable_p[j][k]);
+                        else if (timetable_p[j][k] < 100)
+                                printf("%d   ", timetable_p[j][k]);
+                        else
+                                printf("%d  ", timetable_p[j][k]);
         }
 }
