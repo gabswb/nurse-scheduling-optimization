@@ -42,20 +42,3 @@ int main(int argc, char *argv[])
        // return 0;
 }
 
-
-/**
- * print a matrix
- */
-void print_matrix(int d[NB_MISSION + 1][NB_MISSION + 1])
-{
-       int i, j;
-       for (i = 0; i < NB_MISSION + 1; i++)
-       {
-              printf("%d:", i);
-              for (j = 0; j < NB_MISSION + 1; j++)
-              {
-                     printf("%d ", d[i][j]);
-              }
-              printf("\n");
-       }
-}

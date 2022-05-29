@@ -87,3 +87,17 @@ float* extract_distance_matrix_csv(size_t size_p, std::string path_p)
     }
     return distances;
 }
+
+/**
+ * print a matrix
+ */
+template<typename T>
+void print_matrix(size_t size_p, const T* matrix_p)
+{
+    for (size_t i=0; i < size_p; i++){
+        for (size_t j=0; j < size_p; j++){
+            std::cout<<matrix_p[i*size_p + j] << " ";
+        }
+        std::endl;
+    }
+}

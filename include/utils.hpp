@@ -13,5 +13,6 @@ Mission* extract_mission_csv(size_t size, std::string path);
 Employee* extract_employee_csv(size_t size, std::string path);
 float* extract_distance_matrix_csv(size_t size, std::string path);
 
+template<typename T> void print_matrix(size_t size_p, const T* matrix_p);
 
 #endif /*UTILS_HPP*/
