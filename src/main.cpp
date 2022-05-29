@@ -20,8 +20,8 @@ Usage:  <distance_file> <employee_file> <mission_file>
 int main(int argc, char *argv[])
 {
 
-       int n_employee = extract_rows_nb_csv(argv[2]);
-       int n_mission = extract_rows_nb_csv(argv[3]);
+       size_t n_employee = extract_rows_nb_csv(argv[2]);
+       size_t n_mission = extract_rows_nb_csv(argv[3]);
 
        float* distances = extract_distance_matrix_csv(n_mission+1, argv[1]);//+1 for sessad
        Employee* employees = extract_employee_csv(n_employee, argv[2]);

@@ -38,8 +38,6 @@ Mission* extract_mission_csv(size_t size_p, std::string path_p)
         else if (s_specialty == "Menuiserie") skill = CARPENTRY;
         else if (s_specialty == "Mecanique") skill = MECANIC;
 
-        //std::cout << s_id << " " << s_day << " " << s_starting_period<< " " <<  s_ending_period<< " " << s_specialty<< " " <<  s_skill << "\n";
-
         missions[i] = Mission(std::stoi(s_id), std::stoi(s_day), std::stoi(s_starting_period), std::stoi(s_ending_period), specialty, skill);
     }
 
@@ -59,9 +57,6 @@ Employee* extract_employee_csv(size_t size_p, std::string path_p)
         getline(file, s_skill, ',');
         getline(file, s_specialty, ',');
         getline(file, s_quota, '\n');
-        
-        // std::cout<< "s_id : "<< s_id<< " s_skill : " << s_skill <<" s_specialty : " << s_specialty<<" s_quota : "<<s_quota<<std::endl;
-        // std::cout<<"end"<< std:: endl;
 
         if(s_skill == "LPC") specialty = LPC;
         else if(s_skill == "LSF") specialty = LSF;
@@ -71,8 +66,6 @@ Employee* extract_employee_csv(size_t size_p, std::string path_p)
         else if (s_specialty == "Electricite") skill = ELECTRICITY;
         else if (s_specialty == "Menuiserie") skill = CARPENTRY;
         else if (s_specialty == "Mecanique") skill = MECANIC;
-
-        //std::cout<< "s_id : "<< s_id<< " s_skill : " << skill <<" s_specialty : " << specialty<<" s_quota : "<<s_quota<<std::endl;
 
         employees[i] = Employee(std::stoi(s_id), std::stoi(s_quota), specialty, skill);
     }
@@ -92,6 +85,5 @@ float* extract_distance_matrix_csv(size_t size_p, std::string path_p)
             distances[i*size_p + j] = std::stof(data);
         } 
     }
-
     return distances;
 }
