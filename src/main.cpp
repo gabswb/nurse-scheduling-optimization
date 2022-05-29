@@ -7,73 +7,41 @@
 #include "Employee.hpp"
 #include "Chromosome.hpp"
 #include "Mission.hpp"
+#include "utils.hpp"
+
 #include "instance.hpp"
+#include <stdio.h>
+
 
 void print_matrix(int d[NB_MISSION + 1][NB_MISSION + 1]);
-int generate_int_range(int min, int max);
-
-int main(int argc, char **argv)
+/*
+Usage:  <distance_file> <employee_file> <mission_file>
+*/
+int main(int argc, char *argv[])
 {
-       Skills skills[5] = {ELECTRICITY, CARPENTRY, MUSIC, MECANIC, GARDENING};
-       Specialties specialties[2] = {LSF, LPC};
-       Employee employees[NB_EMPLOYEE];
-       Mission missions[NB_MISSION];
-       int distances[NB_MISSION + 1][NB_MISSION + 1];
-       int tmp, i, j;
 
-       srand(static_cast<int>(time(0)));
+       int n_employee = extract_rows_nb_csv(argv[2]);
+       int n_mission = extract_rows_nb_csv(argv[3]);
 
-       /* Generate random employees and missions */
+       float* distances = extract_distance_matrix_csv(n_mission+1, argv[1]);//+1 for sessad
+       Employee* employees = extract_employee_csv(n_employee, argv[2]);
+       Mission* missions = extract_mission_csv(n_mission, argv[3]);
 
-       for (i = 0; i < NB_EMPLOYEE; i++)
-       {
-              employees[i] = Employee(i, specialties[generate_int_range(0, 1)], skills[generate_int_range(0, 4)]);
-       }
+       
+       delete[] missions;
+       delete[] employees;
+       delete[] distances;
 
-       for (i = 0; i < NB_MISSION; i++)
-       {
-              if (generate_int_range(0, 1))
-                     tmp = generate_int_range(0, 2);
-              else
-                     tmp = generate_int_range(5, 8);
-              missions[i] = Mission(i, generate_int_range(1, 100), generate_int_range(1, 100), generate_int_range(0, 5), tmp, tmp + generate_int_range(1, 3), specialties[generate_int_range(0, 1)], skills[generate_int_range(0, 4)]);
-       }
+       // /* Generate initial solution with first fit algorithm */
+       // std::cout << "\nGenerate initial solution with first fit algotihm\n";
+       // Chromosome initial_solution = Chromosome();
+       // initial_solution.init(missions, employees, distances);
+       // initial_solution.display();
 
-       /* Compute distances btw missions and SESSAD */
-       int sessad_coord_y = generate_int_range(1, 100);
-       int sessad_coord_x = generate_int_range(1, 100);
-       distances[0][0] = -1;
-
-       for (i = 0; i < NB_MISSION; i++)
-              distances[0][i + 1] = sqrt(pow(sessad_coord_y - missions[i].coord_y, 2) + pow(sessad_coord_x - missions[i].coord_x, 2));
-
-       for (i = 0; i < NB_MISSION; i++)
-              distances[i + 1][0] = sqrt(pow(missions[i].coord_y - sessad_coord_y, 2) + pow(missions[i].coord_x - sessad_coord_x, 2));
-
-       /* Compute distances btw mission places */
-       for (i = 0; i < NB_MISSION; i++)
-              for (j = 0; j < NB_MISSION; j++)
-                     if (i == j)
-                            distances[i + 1][j + 1] = -1;
-                     else
-                            distances[i + 1][j + 1] = sqrt(pow(missions[i].coord_y - missions[j].coord_y, 2) + pow(missions[i].coord_x - missions[j].coord_x, 2));
-
-       // print_matrix(distances);
-
-       /* Generate initial solution with first fit algorithm */
-       std::cout << "\nGenerate initial solution with first fit algotihm\n";
-       Chromosome initial_solution = Chromosome();
-       initial_solution.init(missions, employees, distances);
-       initial_solution.display();
-
-       std::cout << "\nDone\n";
-       return 0;
+       // std::cout << "\nDone\n";
+       // return 0;
 }
 
-int generate_int_range(int min, int max)
-{
-       return min + (std::rand() % (max - min + 1));
-}
 
 /**
  * print a matrix
