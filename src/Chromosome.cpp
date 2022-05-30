@@ -5,52 +5,129 @@ Chromosome::Chromosome()
 {
         this->fitness = 0;
         /* Initialize every timetables to -1, which means free */
-        for (int i = 0; i < NB_EMPLOYEE; i++)
+        for (int i = 0; i < n_employee; i++)
                 for (int j = 0; j < N_WEEK_DAY; j++)
                         for (int k = 0; k < N_WORKING_HOURS; k++)
                                 this->employee_timetables[i][j][k] = -1;
 }
 
-Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_EMPLOYEE], int distances[NB_MISSION + 1][NB_MISSION + 1])
+
+
+
+void Chromosome::initial_solution(Mission missions[], Employee employees[], float distances[])
 {
-        int mission_hours, i, lunch_break_count, working_hours;
+        this->genes = new Gene[n_mission];
+        int weekly_working_minutes[n_employee] = {0};
+        int mission_minutes, i, lunch_break_count, working_minutes;
         int affectation_failed = 0;
         bool is_timetable_compatible, affectation_founded;
 
-        int weekly_working_hours[NB_EMPLOYEE] = {0};
-        mission_hours = 0;
+        for(int i = 0 ; i < n_mission ; ++i)
+        {
+                for(int j = 0 ; j < n_employee ; ++j)
+                {
+                        if(missions[i].specialty == employees[i].specialty)
+                        {
+                                is_timetable_compatible = true;
+                                working_minutes = 0;
 
-        for (int j = 0; j < NB_MISSION; j++)
+                                /* Check weekly working minutes */
+                                if (weekly_working_minutes[employees[j].id] > FULL_TIME_WOKRING_MINUTES_WEEK + WEEKLY_OVERTIME - (missions[i].end_minute - missions[j].start_minute))
+                                        is_timetable_compatible = false;
+                                
+                                /* Check timetable constraints */
+                                if (is_timetable_compatible)
+                                for (i = missions[j].start_minute; i < missions[j].end_minute; i++)
+                                {
+                                        /* Check availability */
+                                        if (this->employee_timetables[employees[k].id][missions[j].day][i] >= 0)
+                                                is_timetable_compatible = false;
+
+                                        /* Make sure that the employee has a least 1 minute lunch break */
+                                        if (i == LUNCH_BREAK_1 || i == LUNCH_BREAK_2)
+                                                lunch_break_count++;
+                                        if (lunch_break_count > 1)
+                                        {
+                                                is_timetable_compatible = false;
+                                                i = missions[j].end_minute;
+                                        }
+                                }
+
+                        }
+                }
+                
+                this->genes[i] = Gene()
+        }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chromosome Chromosome::init(Mission missions[], Employee employees[], float distances[])
+{
+        int mission_minutes, i, lunch_break_count, working_minutes;
+        int affectation_failed = 0;
+        bool is_timetable_compatible, affectation_founded;
+
+        int weekly_working_minutes[n_employee] = {0};
+        mission_minutes = 0;
+
+        for (int j = 0; j < n_mission; j++)
         {
                 affectation_founded = false;
-                for (int k = 0; k < NB_EMPLOYEE; k++)
+                for (int k = 0; k < n_employee; k++)
                 {
                         /* Check if specialties are compatibles */
                         if (employees[k].specialty == missions[j].specialty)
                         {
                                 lunch_break_count = 0;
                                 is_timetable_compatible = true;
-                                working_hours = 0;
+                                working_minutes = 0;
 
-                                /* Check weekly working hours */
-                                if (weekly_working_hours[employees[k].id] > FULL_TIME_WOKRING_HOURS_WEEK + WEEKLY_OVERTIME - (missions[j].end_hour - missions[j].start_hour))
+                                /* Check weekly working minutes */
+                                if (weekly_working_minutes[employees[k].id] > FULL_TIME_WOKRING_HOURS_WEEK + WEEKLY_OVERTIME - (missions[j].end_minute - missions[j].start_minute))
                                         is_timetable_compatible = false;
 
                                 /* Check timetable constraints */
                                 if (is_timetable_compatible)
-                                        for (i = missions[j].start_hour; i < missions[j].end_hour; i++)
+                                        for (i = missions[j].start_minute; i < missions[j].end_minute; i++)
                                         {
                                                 /* Check availability */
                                                 if (this->employee_timetables[employees[k].id][missions[j].day][i] >= 0)
                                                         is_timetable_compatible = false;
 
-                                                /* Make sure that the employee has a least 1 hour lunch break */
+                                                /* Make sure that the employee has a least 1 minute lunch break */
                                                 if (i == LUNCH_BREAK_1 || i == LUNCH_BREAK_2)
                                                         lunch_break_count++;
                                                 if (lunch_break_count > 1)
                                                 {
                                                         is_timetable_compatible = false;
-                                                        i = missions[j].end_hour;
+                                                        i = missions[j].end_minute;
                                                 }
                                         }
 
@@ -61,13 +138,13 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                                      this->employee_timetables[employees[k].id][missions[j].day][LUNCH_BREAK_2] >= 0))
                                         is_timetable_compatible = false;
 
-                                /* Check daily working hours */
+                                /* Check daily working minutes */
                                 if (is_timetable_compatible)
                                         for (i = 0; i < N_WORKING_HOURS; i++)
                                         {
                                                 if (this->employee_timetables[employees[k].id][missions[j].day][i] >= 0)
-                                                        working_hours++;
-                                                if (working_hours > FULL_TIME_WOKRING_HOURS_DAY + DAILY_OVERTIME - (missions[j].end_hour - missions[j].start_hour))
+                                                        working_minutes++;
+                                                if (working_minutes > FULL_TIME_WOKRING_HOURS_DAY + DAILY_OVERTIME - (missions[j].end_minute - missions[j].start_minute))
                                                 {
                                                         /* With this mission, the employee would work more than FULL_TIME_WOKRING_HOURS_DAY this day => incompatible */
                                                         is_timetable_compatible = false;
@@ -82,16 +159,16 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                                         affectation_founded = true;
 
                                         /* Fill the timetable */
-                                        for (i = missions[j].start_hour; i < missions[j].end_hour; i++)
+                                        for (i = missions[j].start_minute; i < missions[j].end_minute; i++)
                                         {
                                                 this->employee_timetables[employees[k].id][missions[j].day][i] = missions[j].id;
                                         }
 
-                                        /* Increment weekly working hours count */
-                                        weekly_working_hours[employees[k].id] += missions[j].end_hour - missions[j].start_hour;
+                                        /* Increment weekly working minutes count */
+                                        weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;
 
                                         /* "Break" for-loop */
-                                        k = NB_EMPLOYEE;
+                                        k = n_employee;
                                 }
                         }
                 }
@@ -100,7 +177,7 @@ Chromosome Chromosome::init(Mission missions[NB_MISSION], Employee employees[NB_
                         printf("\n\t*****Affectation impossible*****");
                         affectation_failed++;
                 }
-                mission_hours += missions[j].end_hour - missions[j].start_hour;
+                mission_minutes += missions[j].end_minute - missions[j].start_minute;
         }
         std::cout << "\nAffectation failed: " << affectation_failed;
 
@@ -119,10 +196,10 @@ bool Chromosome::is_valid()
         //                 return false;
 
         //         /* Fill the employe timetables */
-        //         for (i = gene.mission.start_hour; i < gene.mission.end_hour; i++)
+        //         for (i = gene.mission.start_minute; i < gene.mission.end_minute; i++)
         //         {
         //                 if (this->employee_timetables[gene.employee.id][gene.mission.day][i])
-        //                         /* Not valid if the employee is already working during these working hours */
+        //                         /* Not valid if the employee is already working during these working minutes */
         //                         return false;
         //                 else
         //                         this->employee_timetables[gene.employee.id][gene.mission.day][i] = true;
@@ -130,11 +207,11 @@ bool Chromosome::is_valid()
         // }
 
         /* Check timetable constraints */
-        for (i = 0; i < NB_EMPLOYEE; i++)
+        for (i = 0; i < n_employee; i++)
         {
                 for (j = 0; j < N_WEEK_DAY; j++)
                 {
-                        /* Check that employees have at least one hour lunch break every day (btw 12am and 2 pm) */
+                        /* Check that employees have at least one minute lunch break every day (btw 12am and 2 pm) */
                         if (this->employee_timetables[i][j][LUNCH_BREAK_1] >= 0 && this->employee_timetables[i][j][LUNCH_BREAK_2] >= 0)
                                 /* Not valid, the employee is working during the full lunch break */
                                 return false;
@@ -147,18 +224,18 @@ bool Chromosome::is_valid()
 void Chromosome::display()
 {
         int i;
-        for (i = 0; i < NB_MISSION; i++)
+        for (i = 0; i < n_mission; i++)
                 this->genes[i].display();
 
-        for (i = 0; i < NB_EMPLOYEE; i++)
+        for (i = 0; i < n_employee; i++)
         {
                 printf("\n\n\tEmloyee %d", i);
                 display_timetable(this->employee_timetables[i]);
-                // std::cout << "\nWeekly working hours : " << weekly_working_hours[i];
-                // working_hours += weekly_working_hours[i];
+                // std::cout << "\nWeekly working minutes : " << weekly_working_minutes[i];
+                // working_minutes += weekly_working_minutes[i];
         }
 
-        // std::cout << "\ntotal working hours: " << working_hours;
+        // std::cout << "\ntotal working minutes: " << working_minutes;
 }
 
 void Chromosome::display_timetable(int timetable_p[N_WEEK_DAY][N_WORKING_HOURS])

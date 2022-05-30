@@ -13,7 +13,7 @@ class Employee
     int quota;
     Specialties specialty;
     Skills skill;
-    std::vector<Mission> missions;
+    int timetable[N_WEEK_DAY][]
 
     Employee();
     Employee(int id_p, int quota_p, Specialties specialty_p, Skills skill_p);

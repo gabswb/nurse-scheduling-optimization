@@ -19,7 +19,6 @@ set(HEADERS
     include/Employee.hpp
     include/Gene.hpp
     include/Chromosome.hpp
-    include/instance.hpp
     include/utils.hpp
 )
 

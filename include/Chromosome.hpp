@@ -3,7 +3,6 @@
 
 #include "Gene.hpp"
 #include "global.hpp"
-#include "instance.hpp"
 #include <vector>
 #include <unistd.h>
 #include <iostream>
@@ -12,21 +11,21 @@ class Chromosome
 {
 public:
     float fitness;
-    Gene genes[NB_MISSION];
+    Gene* genes;
 
-    /**
-     * @brief employee_timetables[i][j][k] = -1 -> the employee i is free at time k of the day j
-     * @brief employee_timetables[i][j][k] = other -> mission id of employee i at time k of the day j
-     *
-     */
-    int employee_timetables[NB_EMPLOYEE][N_WEEK_DAY][N_WORKING_HOURS] = {-1};
+    // /**
+    //  * @brief employee_timetables[i][j][k] = -1 -> the employee i is free at time k of the day j
+    //  * @brief employee_timetables[i][j][k] = other -> mission id of employee i at time k of the day j
+    //  *
+    //  */
+    // int employee_timetables[n_employee][N_WEEK_DAY][] = {-1};
 
     /**
      * @brief distances[i][j] = distance between mission i and mission j
      * @remark index 0 = SESSAD
      *
      */
-    int distances[NB_MISSION + 1][NB_MISSION + 1];
+    int distances[];
 
     Chromosome();
     /**
@@ -37,6 +36,14 @@ public:
      */
     bool is_valid();
 
+    void initial_solution(Mission missions[], Employee employees[], float distances[]);
+
+
+
+
+
+
+
     /**
      * @brief generate the initial solution with first fit algorithm
      *
@@ -44,7 +51,7 @@ public:
      * @param employees employee set
      * @return Chromosome the chromosome initialized
      */
-    Chromosome init(Mission missions[NB_MISSION], Employee employees[NB_EMPLOYEE], int distances[NB_MISSION + 1][NB_MISSION + 1]);
+    Chromosome init(Mission missions[], Employee employees[], float distances[]);
 
     /**
      * @brief print a given timetable
