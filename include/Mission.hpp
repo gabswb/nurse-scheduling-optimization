@@ -6,27 +6,20 @@
 
 class Mission
 {
-    public:
+public:
     int id;
-    int coord_x;
-    int coord_y;
     int day;
     int start_minute;
     int end_minute;
     Specialties specialty;
-    Skills asked_skill;
-    Skills assigned_skill;
+    Skills skill;
 
     Mission();
-    Mission(int id, int coord_x_p, int coord_y_p, int day_p, int start_minute_p, int end_minute_p, Specialties specialty_p, Skills asked_skill_p, Skills assigned_skill_p);
-    Mission(int id, int coord_x_p, int coord_y_p, int day_p, int start_minute_p, int end_minute_p, Specialties specialty_p, Skills asked_skill_p);
-    Mission(int id, int day_p, int start_minute_p, int end_minute_p, Specialties specialty_p, Skills asked_skill_p);
+    Mission(int id, int day_p, int start_minute_p, int end_minute_p, Specialties specialty_p, Skills skill_p);
 
+    // Mission& operator=(const Mission& m);
 
-    //Mission& operator=(const Mission& m);
-
-    friend std::ostream& operator<<(std::ostream &output, const Mission& m);
-
+    friend std::ostream &operator<<(std::ostream &output, const Mission &m);
 };
 
 #endif /*MISSION_HPP*/

@@ -23,6 +23,7 @@ typedef struct
 {
     int start;
     int end;
+    int mission_id;
 }Time_window;
 
 /* Timetable definitions */

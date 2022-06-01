@@ -15,16 +15,18 @@ public:
 
     /**
      */
-    std::vector<Time_window> employee_timetables[n_employee][N_WEEK_DAY];
+    std::vector<Time_window> **employee_timetables;
 
     /**
      * @brief distances[i][j] = distance between mission i and mission j
      * @remark index 0 = SESSAD
      *
      */
-    int distances[];
+    int *distances;
 
     Chromosome();
+    ~Chromosome();
+
     /**
      * @brief Check if the chromosome respect all constraints
      *
@@ -49,7 +51,7 @@ public:
      *
      * @param timetable_p
      */
-    void display_timetable(int timetable_p[N_WEEK_DAY][N_WORKING_HOURS]);
+    void display_timetable(std::vector<Time_window> *employee_timetables);
 
     /**
      * @brief Display the whole chromosome: every affectations and timetables
