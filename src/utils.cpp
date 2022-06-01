@@ -26,29 +26,28 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
         getline(file, s_day, ',');
         getline(file, s_starting_period, ',');
         getline(file, s_ending_period, ',');
-        getline(file, s_specialty, ',');
-        getline(file, s_skill, '\n');
+        getline(file, s_skill, ',');
+        getline(file, s_specialty, '\n');
 
         if (s_skill == "LPC")
-            specialty = LPC;
+            skill = LPC;
         else if (s_skill == "LSF")
-            specialty = LSF;
+            skill = LSF;
         else
-            printf("****Parsing error (skill)****\n");
+            printf("****Parsing error (mission skill) ****\n");
 
-        printf("\n%s\n", s_specialty);
-        if (s_specialty == "Musique")
-            skill = MUSIC;
-        else if (s_specialty == "Jardinage")
-            skill = GARDENING;
-        else if (s_specialty == "Electricite")
-            skill = ELECTRICITY;
-        else if (s_specialty == "Menuiserie")
-            skill = CARPENTRY;
-        else if (s_specialty == "Mecanique")
-            skill = MECANIC;
+        if (s_specialty.compare("Musique") == 1)
+            specialty = MUSIC;
+        else if (s_specialty.compare("Jardinage") == 1)
+            specialty = GARDENING;
+        else if (s_specialty.compare("Electricite") == 1)
+            specialty = ELECTRICITY;
+        else if (s_specialty.compare("Menuiserie") == 1)
+            specialty = CARPENTRY;
+        else if (s_specialty.compare("Mecanique") == 1)
+            specialty = MECANIC;
         else
-            printf("****Parsing error (specialty)****\n");
+            printf("****Parsing error (mission specialty)****\n");
 
         missions[i] = Mission(std::stoi(s_id), std::stoi(s_day), std::stoi(s_starting_period), std::stoi(s_ending_period), specialty, skill);
     }
@@ -72,24 +71,25 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
         getline(file, s_quota, '\n');
 
         if (s_skill == "LPC")
-            specialty = LPC;
+            skill = LPC;
         else if (s_skill == "LSF")
-            specialty = LSF;
+            skill = LSF;
         else
-            printf("****Parsing error (skill) ****\n");
+            printf("****Parsing error (employee skill) ****\n");
 
         if (s_specialty == "Musique")
-            skill = MUSIC;
+            specialty = MUSIC;
         else if (s_specialty == "Jardinage")
-            skill = GARDENING;
+            specialty = GARDENING;
         else if (s_specialty == "Electricite")
-            skill = ELECTRICITY;
+            specialty = ELECTRICITY;
         else if (s_specialty == "Menuiserie")
-            skill = CARPENTRY;
+            specialty = CARPENTRY;
         else if (s_specialty == "Mecanique")
-            skill = MECANIC;
+            specialty = MECANIC;
         else
-            printf("****Parsing erro (specialty)r****\n");
+            printf("****Parsing error (employee specialty)****\n");
+
         employees[i] = Employee(std::stoi(s_id), std::stoi(s_quota), specialty, skill);
     }
 
