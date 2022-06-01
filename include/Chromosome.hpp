@@ -11,14 +11,11 @@ class Chromosome
 {
 public:
     float fitness;
-    Gene* genes;
+    Gene *genes;
 
-    // /**
-    //  * @brief employee_timetables[i][j][k] = -1 -> the employee i is free at time k of the day j
-    //  * @brief employee_timetables[i][j][k] = other -> mission id of employee i at time k of the day j
-    //  *
-    //  */
-    // int employee_timetables[n_employee][N_WEEK_DAY][] = {-1};
+    /**
+     */
+    std::vector<Time_window> employee_timetables[n_employee][N_WEEK_DAY];
 
     /**
      * @brief distances[i][j] = distance between mission i and mission j
@@ -37,12 +34,6 @@ public:
     bool is_valid();
 
     void initial_solution(Mission missions[], Employee employees[], float distances[]);
-
-
-
-
-
-
 
     /**
      * @brief generate the initial solution with first fit algorithm
