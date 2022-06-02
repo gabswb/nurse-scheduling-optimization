@@ -24,7 +24,7 @@ set(HEADERS
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
-add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall -Wextra -g)
 
 add_executable(it45-operation-research src/main.cpp ${SOURCES} ${HEADERS})
 
