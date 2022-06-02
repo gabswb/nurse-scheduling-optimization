@@ -16,7 +16,6 @@ public:
 
     Employee();
     Employee(int id_p, int quota_p, Specialties specialty_p, Skills skill_p);
-    Employee(int id_p, Specialties specialty_p, Skills skill_p, std::vector<Mission> missions_p);
 
     friend std::ostream &operator<<(std::ostream &output, const Employee &e);
 };

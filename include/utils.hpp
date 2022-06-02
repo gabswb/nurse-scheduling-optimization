@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <list>
 #include "Mission.hpp"
 #include "Employee.hpp"
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <list>
 #include "global.hpp"
 #include "Gene.hpp"
 #include "Employee.hpp"
@@ -23,9 +24,9 @@ int main(int argc, char *argv[])
 
     n_employee = extract_rows_nb_csv(argv[2]);
     n_mission = extract_rows_nb_csv(argv[3]);
-    n_location = n_mission + 1;
+    n_location = n_mission + 1; //+1 for sessad
 
-    float *distances = extract_distance_matrix_csv(n_location, argv[1]); //+1 for sessad
+    float *distances = extract_distance_matrix_csv(n_location, argv[1]); 
     Employee *employees = extract_employee_csv(n_employee, argv[2]);
     Mission *missions = extract_mission_csv(n_mission, argv[3]);
 

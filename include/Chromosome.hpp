@@ -4,7 +4,9 @@
 #include "Gene.hpp"
 #include "global.hpp"
 #include <vector>
+#include <list>
 #include <unistd.h>
+#include <iterator>
 #include <iostream>
 
 class Chromosome
@@ -15,7 +17,7 @@ public:
 
     /**
      */
-    std::vector<Time_window> **employee_timetables;
+    std::list<Time_window> **employee_timetables;
 
     /**
      * @brief distances[i][j] = distance between mission i and mission j
@@ -51,7 +53,7 @@ public:
      *
      * @param timetable_p
      */
-    void display_timetable(std::vector<Time_window> *employee_timetables);
+    void display_timetable(std::list<Time_window> *timetable_p);
 
     /**
      * @brief Display the whole chromosome: every affectations and timetables
