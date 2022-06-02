@@ -16,6 +16,7 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
     int mission_minutes, i, daily_working_minutes;
     int affectation_failed = 0;
     bool is_timetable_compatible, affectation_founded, availability_checked, time_window_founded;
+    Time_window tm;
     std::vector<Time_window>::iterator period_iterator;
 
     int weekly_working_minutes[n_employee] = {0};
@@ -46,14 +47,18 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
                     for (Time_window period : this->employee_timetables[k][missions[j].day])
                     {
                         std::cout << "debug for\n";
+                        std::cout << period.start << ";" << period.end << " | " << missions[j].start_minute << ";" << missions[j].end_minute << "\n";
                         /* Check availability */
                         if (
-                            /* If an employee mission starts before the mission ends, the mission encroaches upon an employee mission */
+                            /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
+                            (period.start <= missions[j].start_minute &&
+                             period.end > missions[j].start_minute) ||
+                            /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
+                            (period.start < missions[j].end_minute &&
+                             period.end >= missions[j].end_minute) ||
+                            /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
                             (period.start >= missions[j].start_minute &&
-                             missions[j].start_minute <= period.end) ||
-                            /* If mission an employee mission ends before the mission start, the mission encroaches upon an employee mission */
-                            (period.start >= missions[j].end_minute &&
-                             missions[j].end_minute <= period.end))
+                             period.end <= missions[j].end_minute))
                         {
                             is_timetable_compatible = false;
                             break;
@@ -95,12 +100,13 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
 
                     /* Fill the timetable */
                     time_window_founded = false;
-                    std::cout << "debug aff\n";
+                    std::cout << "debug aff start " << j << "->" << k << " \n";
 
                     if (daily_working_minutes > 0)
                     { /* If this isn't the first mission this day, we include the mission at the right window */
-                        for (period_iterator = this->employee_timetables[k][missions[j].day].begin(); period_iterator != this->employee_timetables[k][missions[j].day].end(); ++period_iterator)
+                        for (period_iterator = this->employee_timetables[k][missions[j].day].begin(); period_iterator < this->employee_timetables[k][missions[j].day].end(); ++period_iterator)
                         {
+                            std::cout << "debug for iterator\n";
                             if ((*period_iterator).start > missions[j].start_minute)
                             {
                                 Time_window tm;
@@ -109,20 +115,27 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
                                 tm.mission_id = missions[j].id;
                                 this->employee_timetables[k][missions[j].day].insert(period_iterator, tm);
                                 time_window_founded = true;
+                                std::cout << "timewindow founded\n";
+
                                 break;
                             }
                         }
                     }
-                    std::cout << "debugaff\n";
 
                     if (!time_window_founded)
-                    { /* this is the first mission this day, we simply add it or this is the latest of the day  */
-                        Time_window tm;
+                    { /* this is the first mission this day or the latest of the day, we simply add it at the end*/
+                        // std::cout << "not timewindow founded start\n";
                         tm.start = missions[j].start_minute;
                         tm.end = missions[j].end_minute;
-                        this->employee_timetables[k][missions[j].day].push_back(tm);
+                        tm.mission_id = missions[j].id;
+                        // std::cout << "test" << missions[j].day << " " << this->employee_timetables[k][missions[j].day].capacity() << "\n";
+                        // std::cout << "tm" << tm.start << " " << tm.end << " " << tm.mission_id << "\n";
+
+                        // std::cout << this->employee_timetables[k][missions[j].day].front().mission_id;
+                        (this->employee_timetables[k][missions[j].day]).push_back(tm);
+                        // std::cout << "not timewindow founded end\n";
                     }
-                    std::cout << "debug aff\n";
+                    std::cout << "debug aff end\n";
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;
@@ -148,8 +161,8 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
 
 bool Chromosome::is_valid()
 {
-    int i = 0,
-        j = 0;
+    // int i = 0,
+    //     j = 0;
     // TODO a finir
     // for (Gene gene : this->genes)
     // {
@@ -208,7 +221,7 @@ void Chromosome::display_timetable(std::vector<Time_window> *timetable_p)
             printf("%d |  ", k);
     }
     printf("\n");
-    for (int j = 0; j < N_WEEK_DAY; j++)
+    for (int j = MONDAY; j < N_WEEK_DAY + MONDAY; j++)
     {
         printf("\n%d   ", j);
         // printf("debug\n");
@@ -231,6 +244,7 @@ void Chromosome::display_timetable(std::vector<Time_window> *timetable_p)
             }
         }
     }
+    std::cout << "\n";
 }
 
 Chromosome::~Chromosome()

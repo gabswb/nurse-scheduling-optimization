@@ -49,7 +49,7 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
         else
             printf("****Parsing error (mission specialty)****\n");
 
-        missions[i] = Mission(std::stoi(s_id), std::stoi(s_day), std::stoi(s_starting_period), std::stoi(s_ending_period), specialty, skill);
+        missions[i] = Mission(std::stoi(s_id) - 1, std::stoi(s_day) - 1, std::stoi(s_starting_period), std::stoi(s_ending_period), specialty, skill);
     }
 
     return missions;
@@ -90,7 +90,7 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
         else
             printf("****Parsing error (employee specialty)****\n");
 
-        employees[i] = Employee(std::stoi(s_id), std::stoi(s_quota), specialty, skill);
+        employees[i] = Employee(std::stoi(s_id) - 1, std::stoi(s_quota), specialty, skill);
     }
 
     return employees;
