@@ -1,6 +1,6 @@
 #include "Employee.hpp"
 
-Employee::Employee(){}
+Employee::Employee() {}
 
 Employee::Employee(int id_p, int qutoa_p, Specialties specialty_p, Skills skill_p)
 {
@@ -15,11 +15,10 @@ Employee::Employee(int id_p, Specialties specialty_p, Skills skill_p, std::vecto
     this->id = id_p;
     this->specialty = specialty_p;
     this->skill = skill_p;
-    this->missions = missions_p;
 }
 
-std::ostream& operator<<(std::ostream &output, const Employee& e)
+std::ostream &operator<<(std::ostream &output, const Employee &e)
 {
-    output << "Employee("<< e.id<<", "<< e.quota <<", "<< e.specialty<<", "<< e.skill<< ")"<<std::endl;
+    output << "Employee(" << e.id << ", " << e.quota << ", " << e.specialty << ", " << e.skill << ")" << std::endl;
     return output;
 }

@@ -4,13 +4,13 @@
 extern int n_employee;
 extern int n_mission;
 
-enum Specialties
+enum Skills
 {
     LSF,
     LPC
 };
 
-enum Skills
+enum Specialties
 {
     ELECTRICITY,
     CARPENTRY,
@@ -23,10 +23,11 @@ typedef struct
 {
     int start;
     int end;
-}Time_window;
+    int mission_id;
+} Time_window;
 
 /* Timetable definitions */
-#define N_WEEK_DAY 5              // 6 ?
+#define N_WEEK_DAY 5 // 6 ?
 #define START_HOUR 9
 #define END_HOUR 18
 #define N_WORKING_HOURS (18 - 9)  //?
