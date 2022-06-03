@@ -67,6 +67,7 @@ public:
     void evaluate();
     void mutate();
     void is_mission_affected();
+
 };
 
 #endif /*CHROMOSOME_HPP*/
