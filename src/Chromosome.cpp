@@ -4,19 +4,22 @@
 Chromosome::Chromosome()
 {
     this->fitness = 0;
-    this->genes = new Gene[n_employee];
-    this->employee_timetables = new std::list<Time_window> [(n_employee+1)*N_WEEK_DAY];
+    this->genes = new Gene[n_mission];
+    this->employee_timetables = new std::list<Time_window> [(n_employee)*N_WEEK_DAY];
     // for (int i = 0; i < n_employee*N_WEEK_DAY; ++i)
     //     this->employee_timetables[i] = std::list<Time_window>();
-
 }
 
-Chromosome Chromosome::init(Mission missions[], Employee employees[], float distances[])
+bool time_window_compare(const Time_window &a, const Time_window &b)
+{
+    return a.start < b.start;
+};
+
+void Chromosome::init(Mission missions[], Employee employees[], float distances[])
 {
     int mission_minutes, i, daily_working_minutes;
     int affectation_failed = 0;
     bool is_timetable_compatible, affectation_founded, availability_checked, time_window_founded;
-    Time_window tm;
     std::list<Time_window>::iterator period_iterator;
 
     int weekly_working_minutes[n_employee] = {0};
@@ -28,7 +31,6 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
         affectation_founded = false;
         for (int k = 0; k < n_employee; k++)
         {
-            printf("Debug speciality %d (employe %d)\n", j, k);
             /* Check if specialties are compatibles */
             if (employees[k].skill == missions[j].skill)
             {
@@ -44,59 +46,55 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
                 {
                     availability_checked = false;
 
-                    std::cout << "debug1 " << missions[j].day << " : " << k << "\n";
-                    
-                    // for (period_iterator = this->employee_timetables[k*N_WEEK_DAY + missions[j].day].begin(); period_iterator != this->employee_timetables[k*N_WEEK_DAY + missions[j].day].end(); ++period_iterator)
+                    // for (Time_window period : this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day])
                     // {
-                    //     std::cout << "debug for\n";
-                    //     std::cout << (*period_iterator).start << ";" << (*period_iterator).end << " | " << missions[j].start_minute << ";" << missions[j].end_minute << "\n";
-                    //     std::cout << "debug for1\n";
                     //     /* Check availability */
                     //     if (
                     //         /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
-                    //         ((*period_iterator).start <= missions[j].start_minute &&
-                    //          (*period_iterator).end > missions[j].start_minute) ||
+                    //         (period.start <= missions[j].start_minute &&
+                    //          period.end > missions[j].start_minute) ||
                     //         /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
-                    //         ((*period_iterator).start < missions[j].end_minute &&
-                    //          (*period_iterator).end >= missions[j].end_minute) ||
+                    //         (period.start < missions[j].end_minute &&
+                    //          period.end >= missions[j].end_minute) ||
                     //         /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
-                    //         ((*period_iterator).start >= missions[j].start_minute &&
-                    //          (*period_iterator).end <= missions[j].end_minute))
+                    //         (period.start >= missions[j].start_minute &&
+                    //          period.end <= missions[j].end_minute))
                     //     {
                     //         is_timetable_compatible = false;
                     //         break;
                     //     }
 
                     //     /* Count daily working minutes */
-                    //     daily_working_minutes += (*period_iterator).end - (*period_iterator).end;
+                    //     daily_working_minutes += period.end - period.end;
                     // }
-                    for (Time_window period : this->employee_timetables[(k+1)*N_WEEK_DAY + missions[j].day])
-                    {
-                        std::cout << "debug for\n";
-                        std::cout << period.start << ";" << period.end << " | " << missions[j].start_minute << ";" << missions[j].end_minute << "\n";
-                        /* Check availability */
-                        if (
-                            /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
-                            (period.start <= missions[j].start_minute &&
-                             period.end > missions[j].start_minute) ||
-                            /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
-                            (period.start < missions[j].end_minute &&
-                             period.end >= missions[j].end_minute) ||
-                            /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
-                            (period.start >= missions[j].start_minute &&
-                             period.end <= missions[j].end_minute))
-                        {
-                            is_timetable_compatible = false;
-                            break;
-                        }
+                    for(Time_window tw : this->employee_timetables[k*N_WEEK_DAY + missions[j].day]){
+                        if(missions[j].start_minute < tw.start){//mission start before tw
 
-                        /* Count daily working minutes */
-                        daily_working_minutes += period.end - period.end;
+                            float distance = distances[(missions[j].id+1)*n_location + tw.mission_id+1];//get distance mission-->tw
+
+                            if(missions[j].end_minute + distance*TRAVEL_SPEED >= tw.start)
+                            {
+                                is_timetable_compatible = false;
+                                break;
+                            }
+                            else
+                                std::cout << "\n distance "<< k << " -> " << j << "=" << distance; 
+                        }
+                        else{//tw start before mission
+                            float distance = distances[(tw.mission_id+1)*n_location + missions[j].id+1];//get distance tw-->mission
+
+                            if((missions[j].start_minute + distance*TRAVEL_SPEED) <= tw.end)
+                            {
+                                is_timetable_compatible = false;
+                                break;
+                            }
+                            else
+                                std::cout << "\n distance "<< k << " -> " << j << "=" << distance;
+                        }
                     }
-                    std::cout << "debug2\n";
                 }
 
-                // /* Make sure that the employee has a least 1 hour lunch break */
+                /* Make sure that the employee has a least 1 hour lunch break */
                 // if(is_timetable_compatible)
                 //     if ((missions[j].start_minute >= LUNCH_BREAK_START && missions[j].start_minute <= LUNCH_BREAK_END) ||
                 //         (missions[j].end_minute >= LUNCH_BREAK_START && missions[j].end_minute <= LUNCH_BREAK_END))
@@ -111,7 +109,6 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
                         /* With this mission, the employee would work more than the maximum allowed this day => incompatible */
                         is_timetable_compatible = false;
 
-                std::cout << "debug3\n";
 
                 /* Check travel time (only if the employee has alreay a mission scheduled this day) */
                 if (is_timetable_compatible && daily_working_minutes > 0)
@@ -126,47 +123,21 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
 
                     /* Fill the timetable */
                     time_window_founded = false;
-                    std::cout << "debug aff start " << j << "->" << k << " \n";
 
-                    if (daily_working_minutes > 0)
-                    { /* If this isn't the first mission this day, we include the mission at the right window */
-                        for (period_iterator = this->employee_timetables[(k+1)*N_WEEK_DAY + missions[j].day].begin(); period_iterator != this->employee_timetables[(k+1)*N_WEEK_DAY + missions[j].day].end(); ++period_iterator)
-                        {
-                            std::cout << "debug for iterator\n";
-                            if ((*period_iterator).start > missions[j].start_minute)
-                            {
-                                Time_window tm;
-                                tm.start = missions[j].start_minute;
-                                tm.end = missions[j].end_minute;
-                                tm.mission_id = missions[j].id;
-                                this->employee_timetables[(k+1)*N_WEEK_DAY + missions[j].day].insert(period_iterator, tm);
-                                time_window_founded = true;
-                                std::cout << "timewindow founded\n";
-                                break;
-                            }
-                        }
-                    }
+                    /* Affectation */
+                    Time_window tm;
+                    tm.start = missions[j].start_minute;
+                    tm.end = missions[j].end_minute;
+                    tm.mission_id = missions[j].id;
+                    this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day].push_back(tm);
 
-                    if (!time_window_founded)
-                    { /* this is the first mission this day or the latest of the day, we simply add it at the end*/
-                        // std::cout << "not timewindow founded start\n";
-                        tm.start = missions[j].start_minute;
-                        tm.end = missions[j].end_minute;
-                        tm.mission_id = missions[j].id;
-                        // std::cout << "test" << missions[j].day << " " << this->employee_timetables[k][missions[j].day].capacity() << "\n";
-                        // std::cout << "tm" << tm.start << " " << tm.end << " " << tm.mission_id << "\n";
-
-                        // std::cout << this->employee_timetables[k][missions[j].day].front().mission_id;
-                        this->employee_timetables[(k+1)*N_WEEK_DAY + missions[j].day].push_back(tm);
-                        // std::cout << "not timewindow founded end\n";
-                    }
-                    std::cout << "debug aff end\n";
+                    if (daily_working_minutes > 0) /* If this isn't the first mission this day, we sort the list */
+                        this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day].sort(time_window_compare);
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;
 
                     /* "Break" for-loop */
-                    this->display_timetable(k);
                     k = n_employee;
                 }
             }
@@ -181,7 +152,6 @@ Chromosome Chromosome::init(Mission missions[], Employee employees[], float dist
     }
 
     std::cout << "\nAffectation failed: " << affectation_failed;
-    return *this;
 }
 
 bool Chromosome::is_valid()
@@ -239,17 +209,16 @@ void Chromosome::display_timetable(int employee)
     for (int k = START_HOUR; k < END_HOUR; ++k)
     {
         if (k < 10)
-            printf("%d  |  ", k);
+            std::cout << k << "  |  ";
         else
-            printf("%d |  ", k);
+            std::cout << k << " |  ";
     }
-    printf("\n");
+    std::cout << "\n";
     for (int j = MONDAY; j < N_WEEK_DAY + MONDAY; ++j)
     {
-        printf("\n%d   ", j);
-        // printf("debug\n");
+        std::cout << "\n" << j << "   ";
         i = START_HOUR * 60;
-        for (Time_window mission_time_window : this->employee_timetables[(employee+1) * N_WEEK_DAY + j])
+        for (Time_window mission_time_window : this->employee_timetables[employee*N_WEEK_DAY + j])
         {
             // printf("debug\n");
             for (; i < mission_time_window.start; i += 10)

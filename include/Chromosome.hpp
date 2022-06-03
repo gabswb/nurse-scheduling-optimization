@@ -49,7 +49,7 @@ public:
      * @param employees employee set
      * @return Chromosome the chromosome initialized
      */
-    Chromosome init(Mission missions[], Employee employees[], float distances[]);
+    void init(Mission missions[], Employee employees[], float distances[]);
 
     /**
      * @brief print a employee timetable

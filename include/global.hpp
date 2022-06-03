@@ -3,6 +3,7 @@
 
 extern int n_employee;
 extern int n_mission;
+extern int n_location;
 
 enum Skills
 {
@@ -26,6 +27,8 @@ typedef struct
     int mission_id;
 } Time_window;
 
+
+
 /* Timetable definitions */
 #define N_WEEK_DAY 5 // 6 ?
 #define START_HOUR 8
@@ -48,6 +51,7 @@ typedef struct
 #define FRIDAY 4
 #define START_MINUTE 0
 #define END_MINUTE 1
-//#define SATURDAY 6 //?
+#define TRAVEL_SPEED 50*1000/60
+    //#define SATURDAY 6 //?
 
 #endif /*GLOBAL_HPP*/

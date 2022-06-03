@@ -30,10 +30,10 @@ int main(int argc, char *argv[])
     Employee *employees = extract_employee_csv(n_employee, argv[2]);
     Mission *missions = extract_mission_csv(n_mission, argv[3]);
 
-    for (int i = 0; i < n_employee; ++i)
-        std::cout << employees[i];
-    for (int i = 0; i < n_mission; ++i)
-        std::cout << missions[i];
+    // for (int i = 0; i < n_employee; ++i)
+    //     std::cout << employees[i];
+    // for (int i = 0; i < n_mission; ++i)
+    //     std::cout << missions[i];
 
     /* Generate initial solution with first fit algorithm */
     std::cout << "\nGenerate initial solution with first fit algotihm\n";
