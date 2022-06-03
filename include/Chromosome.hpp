@@ -4,10 +4,11 @@
 #include "Gene.hpp"
 #include "global.hpp"
 #include <vector>
-#include <list>
+// #include <list>
 #include <unistd.h>
 #include <iterator>
 #include <iostream>
+#include <bits/stdc++.h>
 
 class Chromosome
 {
@@ -16,8 +17,10 @@ public:
     Gene *genes;
 
     /**
+     * @brief equivalent to employee_timetables[n_employee][N_WEEK]
+     * 
      */
-    std::list<Time_window> **employee_timetables;
+    std::list<Time_window> *employee_timetables;
 
     /**
      * @brief distances[i][j] = distance between mission i and mission j
@@ -49,11 +52,11 @@ public:
     Chromosome init(Mission missions[], Employee employees[], float distances[]);
 
     /**
-     * @brief print a given timetable
+     * @brief print a employee timetable
      *
-     * @param timetable_p
+     * @param employee
      */
-    void display_timetable(std::list<Time_window> *timetable_p);
+    void display_timetable(int employee);
 
     /**
      * @brief Display the whole chromosome: every affectations and timetables
