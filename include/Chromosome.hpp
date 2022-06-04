@@ -14,59 +14,47 @@ class Chromosome
 {
 public:
     float fitness;
-    Gene *genes;
-
-    /**
-     * @brief equivalent to employee_timetables[n_employee][N_WEEK]
-     * 
-     */
-    std::list<Time_window> *employee_timetables;
-
-    /**
-     * @brief distances[i][j] = distance between mission i and mission j
-     * @remark index 0 = SESSAD
-     *
-     */
-    int *distances;
+    Gene* genes;//array of Gene
+    std::list<Time_window>* employee_timetables;//matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
 
     Chromosome();
-    ~Chromosome();
+    virtual ~Chromosome();
 
     /**
      * @brief Check if the chromosome respect all constraints
-     *
-     * @return true is valid
-     * @return false isn't valid
+     * @return true is valid, false otherwise
      */
     bool is_valid();
 
-    void initial_solution(Mission missions[], Employee employees[], float distances[]);
-
     /**
      * @brief generate the initial solution with first fit algorithm
-     *
      * @param missions mission set
      * @param employees employee set
-     * @return Chromosome the chromosome initialized
+     * @param distances distance matrix
      */
-    void init(Mission missions[], Employee employees[], float distances[]);
+    void initialize(Mission missions[], Employee employees[], float distances[]);
 
     /**
      * @brief print a employee timetable
-     *
      * @param employee
      */
-    void display_timetable(int employee);
+    void print_employee_timetable(int employee);
+    
+    /**
+     * @brief Display all the informations of the chromosome (all the employees timetable)
+     */
+    friend std::ostream &operator<<(std::ostream &output, Chromosome &c);
 
     /**
-     * @brief Display the whole chromosome: every affectations and timetables
-     *
+     * @brief compute the fitness of the chromosome
      */
-    void display();
+    float evaluate();
 
-    void evaluate();
+    /**
+     * @brief apply mutation on the chromosome
+     */
     void mutate();
-    void is_mission_affected();
+
 
 };
 

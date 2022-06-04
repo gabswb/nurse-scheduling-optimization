@@ -25,8 +25,9 @@ typedef struct
     int start;
     int end;
     int mission_id;
-} Time_window;
-
+}
+Time_window;
+        
 
 
 /* Timetable definitions */
@@ -51,7 +52,7 @@ typedef struct
 #define FRIDAY 4
 #define START_MINUTE 0
 #define END_MINUTE 1
-#define TRAVEL_SPEED 50*1000/60
+#define TRAVEL_SPEED (50*(1000/60))
     //#define SATURDAY 6 //?
 
 #endif /*GLOBAL_HPP*/

@@ -20,7 +20,7 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
     Specialties specialty;
     Skills skill;
 
-    for (int i = 0; i < size_p; i++)
+    for (int i = 0; i < size_p; ++i)
     {
         getline(file, s_id, ',');
         getline(file, s_day, ',');
@@ -63,7 +63,7 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
     Specialties specialty;
     Skills skill;
 
-    for (int i = 0; i < size_p; i++)
+    for (int i = 0; i < size_p; ++i)
     {
         getline(file, s_id, ',');
         getline(file, s_skill, ',');
@@ -101,14 +101,17 @@ float *extract_distance_matrix_csv(int size_p, std::string path_p)
     std::ifstream file(path_p);
     std::string data;
 
-    for (int i = 0; i < size_p + 1; i++)
+    for (int i = 0; i < size_p; ++i)
     {
-        for (int j = 0; j < size_p; j++)
+        for (int j = 0; j < size_p-1; ++j)
         {
             getline(file, data, ',');
             distances[i * size_p + j] = std::stof(data);
         }
+        getline(file, data, '\n');
+        distances[i * size_p + size_p-1] = std::stof(data);
     }
+
     return distances;
 }
 

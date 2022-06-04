@@ -4,28 +4,25 @@ Gene::Gene(Mission m, Employee e)
 {
     this->mission = m;
     this->employee = e;
-    this->isAffected = true;
+    this->is_assigned = true;
 }
 
 Gene::Gene()
 {
-    this->isAffected = false;
+    this->is_assigned = false;
 }
 
-bool Gene::is_affected()
-{
-    return this->isAffected;
-}
 
 bool Gene::check_specialty()
 {
     return this->mission.specialty == this->employee.specialty;
 }
 
-void Gene::display()
+std::ostream &operator<<(std::ostream &output, const Gene &g)
 {
-    printf("\n----------------Mission %d -> Employee %d----------------", this->mission.id, this->employee.id);
-    printf("\nDay %d from %d to %d", this->mission.day, this->mission.start_minute, this->mission.end_minute);
-    printf("\nSpecialty: %d Asked skill %d", this->mission.specialty, this->mission.skill);
-    printf("\nEmployee spe: %d employee skill: %d", this->employee.specialty, this->employee.skill);
+    output <<"\n----------------Mission "<< g.mission.id<<" Employee "<< g.employee.id<< "----------------\n"
+            <<"Day "<< g.mission.day<< " from "<< g.mission.start_minute<< " to "<< g.mission.end_minute<< "\n"
+            <<"Specialty: "<< g.mission.specialty<< " Asked skill "<< g.mission.skill<< "\n"
+            <<"Employee spe: "<< g.employee.specialty<< " employee skill: "<< g.employee.skill<< std::endl;
+    return output;
 }

@@ -5,9 +5,7 @@ Chromosome::Chromosome()
 {
     this->fitness = 0;
     this->genes = new Gene[n_mission];
-    this->employee_timetables = new std::list<Time_window> [(n_employee)*N_WEEK_DAY];
-    // for (int i = 0; i < n_employee*N_WEEK_DAY; ++i)
-    //     this->employee_timetables[i] = std::list<Time_window>();
+    this->employee_timetables = new std::list<Time_window> [n_employee*N_WEEK_DAY];
 }
 
 bool time_window_compare(const Time_window &a, const Time_window &b)
@@ -15,9 +13,9 @@ bool time_window_compare(const Time_window &a, const Time_window &b)
     return a.start < b.start;
 };
 
-void Chromosome::init(Mission missions[], Employee employees[], float distances[])
+void Chromosome::initialize(Mission missions[], Employee employees[], float distances[])
 {
-    int mission_minutes, i, daily_working_minutes;
+    int mission_minutes, daily_working_minutes;
     int affectation_failed = 0;
     bool is_timetable_compatible, affectation_founded, availability_checked, time_window_founded;
     std::list<Time_window>::iterator period_iterator;
@@ -46,50 +44,23 @@ void Chromosome::init(Mission missions[], Employee employees[], float distances[
                 {
                     availability_checked = false;
 
-                    // for (Time_window period : this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day])
-                    // {
-                    //     /* Check availability */
-                    //     if (
-                    //         /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
-                    //         (period.start <= missions[j].start_minute &&
-                    //          period.end > missions[j].start_minute) ||
-                    //         /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
-                    //         (period.start < missions[j].end_minute &&
-                    //          period.end >= missions[j].end_minute) ||
-                    //         /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
-                    //         (period.start >= missions[j].start_minute &&
-                    //          period.end <= missions[j].end_minute))
-                    //     {
-                    //         is_timetable_compatible = false;
-                    //         break;
-                    //     }
 
-                    //     /* Count daily working minutes */
-                    //     daily_working_minutes += period.end - period.end;
-                    // }
                     for(Time_window tw : this->employee_timetables[k*N_WEEK_DAY + missions[j].day]){
                         if(missions[j].start_minute < tw.start){//mission start before tw
-
                             float distance = distances[(missions[j].id+1)*n_location + tw.mission_id+1];//get distance mission-->tw
-
-                            if(missions[j].end_minute + distance*TRAVEL_SPEED >= tw.start)
-                            {
+                            
+                            if(missions[j].end_minute + distance/TRAVEL_SPEED >= tw.start){
                                 is_timetable_compatible = false;
                                 break;
                             }
-                            else
-                                std::cout << "\n distance "<< k << " -> " << j << "=" << distance; 
                         }
                         else{//tw start before mission
                             float distance = distances[(tw.mission_id+1)*n_location + missions[j].id+1];//get distance tw-->mission
 
-                            if((missions[j].start_minute + distance*TRAVEL_SPEED) <= tw.end)
-                            {
+                            if((missions[j].start_minute + distance/TRAVEL_SPEED) <= tw.end){
                                 is_timetable_compatible = false;
                                 break;
                             }
-                            else
-                                std::cout << "\n distance "<< k << " -> " << j << "=" << distance;
                         }
                     }
                 }
@@ -115,8 +86,7 @@ void Chromosome::init(Mission missions[], Employee employees[], float distances[
                 {
                 }
 
-                if (is_timetable_compatible)
-                {
+                if (is_timetable_compatible){
                     /* Gene affectation */
                     this->genes[j] = Gene(missions[j], employees[k]);
                     affectation_founded = true;
@@ -191,17 +161,42 @@ bool Chromosome::is_valid()
     return true;
 }
 
-void Chromosome::display()
+float Chromosome::evaluate()
 {
-    int i;
-    for (i = 0; i < n_mission; i++)
-        this->genes[i].display();
+    float fitness=0;
+    float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
+    float mean_wasted_hours=0, mean_overtime=0, mean_distances=0;//mean
+    float mean2_wasted_hours=0, mean2_overtime=0, mean2_distances=0;//means square
 
-    for (i = 0; i < n_employee; i++)
-        display_timetable(i);
+    std::list<Time_window>::iterator it;
+
+    for(int i=0; i<n_employee; ++i){
+        for(int j=0; j<N_WEEK_DAY; ++j){
+            for (it = employee_timetables[i*N_WEEK_DAY + j].begin(); it !=employee_timetables[i*N_WEEK_DAY + j].end(); ++it){
+                mean_wasted_hours += it->end;//TODO
+            }
+        }
+    }
+
+    return fitness;
 }
 
-void Chromosome::display_timetable(int employee)
+
+
+
+
+std::ostream &operator<<(std::ostream &output, Chromosome &c)
+{
+    for (int i=0; i < n_mission; ++i)
+        output<< c.genes[i];
+
+    for (int i=0; i < n_employee; ++i)
+        c.print_employee_timetable(i);
+    
+    return output;
+}
+
+void Chromosome::print_employee_timetable(int employee)
 {
     int i;
     printf("\n------------------Emloyee %d------------------", employee);
@@ -237,13 +232,10 @@ void Chromosome::display_timetable(int employee)
             }
         }
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 }
 
 Chromosome::~Chromosome()
 {
-    // for (int i = 0; i < n_employee * ; i++)
-    //     delete[] this->employee_timetables[i];
     delete[] this->employee_timetables;
-    std::cout << "\nFree memory";
 }

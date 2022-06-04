@@ -9,14 +9,14 @@ class Gene
 public:
     Mission mission;
     Employee employee;
-    bool isAffected;
+    bool is_assigned;
 
     Gene();
     Gene(Mission m, Employee e);
     
-    bool is_affected();
     bool check_specialty();
-    void display();
+
+    friend std::ostream &operator<<(std::ostream &output, const Gene &g);
 };
 
 #endif /*GENE_HPP*/
