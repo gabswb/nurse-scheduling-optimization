@@ -28,16 +28,18 @@ int main(int argc, char *argv[])
     n_mission = extract_rows_nb_csv(argv[3]);
     n_location = n_mission + 1; //+1 for sessad
 
-    float* distances = extract_distance_matrix_csv(n_location, argv[1]); 
-    Employee* employees = extract_employee_csv(n_employee, argv[2]);
-    Mission* missions = extract_mission_csv(n_mission, argv[3]);
+    const float* distances = extract_distance_matrix_csv(n_location, argv[1]); 
+    const Employee* employees = extract_employee_csv(n_employee, argv[2]);
+    const Mission* missions = extract_mission_csv(n_mission, argv[3]);
 
     /* Generate initial solution with first fit algorithm */
     std::cout << "\nGenerate initial solution with first fit algotihm\n";
-    Chromosome initial_solution = Chromosome(employees, distances);
-    initial_solution.initialize(missions, employees, distances);
+    Chromosome initial_solution = Chromosome(&missions, &employees, &distances);
+    initial_solution.initialize();
     std::cout << initial_solution<< std::endl;
     std::cout << "\nDone\n";
+    std::cout << "Evaluation: " << initial_solution.evaluate() << std::endl;
+
 
     delete[] missions;
     delete[] employees;
