@@ -9,6 +9,7 @@
 #include <iterator>
 #include <iostream>
 #include <bits/stdc++.h>
+#include <cmath>
 
 class Chromosome
 {
@@ -17,7 +18,10 @@ public:
     Gene* genes;//array of Gene
     std::vector<Time_window>* employee_timetables;//matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
 
-    Chromosome();
+    /*correlation coefficient for fitness*/
+    float alpha, beta, gamma, zeta, kappa;
+
+    Chromosome(Employee employees[], float distances[]);
     virtual ~Chromosome();
 
     /**
@@ -48,7 +52,7 @@ public:
     /**
      * @brief compute the fitness of the chromosome
      */
-    float evaluate();
+    float evaluate(float distances[], Employee employees[]);
 
     /**
      * @brief apply mutation on the chromosome

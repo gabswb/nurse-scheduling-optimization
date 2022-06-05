@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     /* Generate initial solution with first fit algorithm */
     std::cout << "\nGenerate initial solution with first fit algotihm\n";
-    Chromosome initial_solution = Chromosome();
+    Chromosome initial_solution = Chromosome(employees, distances);
     initial_solution.initialize(missions, employees, distances);
     std::cout << initial_solution<< std::endl;
     std::cout << "\nDone\n";

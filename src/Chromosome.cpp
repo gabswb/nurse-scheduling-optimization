@@ -1,11 +1,25 @@
 #include "Chromosome.hpp"
 
-Chromosome::Chromosome()
+Chromosome::Chromosome(Employee employees[], float distances[])
 {
     this->fitness = 0;
     this->genes = new Gene[n_mission];
     this->employee_timetables = new std::vector<Time_window> [n_employee*N_WEEK_DAY];
-    this->employee_timetables->reserve(n_mission);
+    for(int i=0; i<n_employee*N_WEEK_DAY;++i){
+        employee_timetables[i].reserve(n_mission/(N_WEEK_DAY*n_employee));//reserve de la mémoire en supposant que les missions seront réparties uniformément par employé et par jour
+    }
+
+    alpha = 100/n_mission;
+    beta = 100/ (N_WORKING_HOURS+WEEKLY_OVERTIME)  ;
+    for(int i=0; i<n_employee; ++i){
+        gamma+=employees[i].quota;
+    }
+    gamma = 100/gamma;
+    zeta = 100/WEEKLY_OVERTIME;
+    for(int i=0; i<n_location;++i){
+        kappa += distances[0*n_location + 1] + distances[i*n_location + 0];
+    }
+    kappa = 100/(kappa/n_employee); 
 }
 
 bool time_window_compare(const Time_window &a, const Time_window &b)
@@ -162,25 +176,46 @@ bool Chromosome::is_valid()
     return true;
 }
 
-// float Chromosome::evaluate()
-// {
-//     float fitness=0;
-//     float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
-//     float mean_wasted_hours=0, mean_overtime=0, mean_distances=0;//mean
-//     float mean2_wasted_hours=0, mean2_overtime=0, mean2_distances=0;//means square
+float Chromosome::evaluate(float distances[], Employee employees[])
+{
+    float fitness=0, delta_time, employee_worktime, temp_distance;
+    float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
+    float sum_wasted_hours=0, sum_overtime=0, sum_distances=0;//sums
+    float sum2_wasted_hours=0, sum2_overtime=0, sum2_distances=0;//quadratic sums
 
-//     std::list<Time_window>::iterator it;
+    //compute in one pass the sum and the quadratic sum of wasted hours, overtime and distances 
+    for(int i=0; i<n_employee; ++i){
+        employee_worktime=0;
+        for(int j=0; j<N_WEEK_DAY; ++j){
 
-//     for(int i=0; i<n_employee; ++i){
-//         for(int j=0; j<N_WEEK_DAY; ++j){
-//             for (it = employee_timetables[i*N_WEEK_DAY + j].begin(); it !=employee_timetables[i*N_WEEK_DAY + j].end(); ++it){
-//                 mean_wasted_hours += it->end+distance;
-//             }
-//         }
-//     }
+            auto &vec = employee_timetables[i*n_employee + j];//reference on current vector for more readability
+            for(size_t k=0; k<vec.size(); ++k)
+            {
+                temp_distance = distances[vec[k+1].mission_id*n_location + vec[k+2].mission_id];//distance form i to i+1
 
-//     return fitness;
-// }
+                delta_time =  vec[k+1].start - temp_distance/TRAVEL_SPEED - vec[k].start; //start time of i+1 - travel time from i-->i+1 - end time of i
+                sum_wasted_hours += delta_time;
+                sum2_wasted_hours += pow(delta_time,2);
+
+                employee_worktime += vec[k].end - vec[k].start;
+
+                sum_distances += temp_distance;
+                sum2_distances += pow(temp_distance,2);
+
+            }
+        }
+        sum_overtime += employee_worktime - employees[i].quota;
+        sum2_overtime += pow(employee_worktime - employees[i].quota, 2);
+    }
+
+    //compute the standart derivation = E(X²)-E(X)², X the wasted hours, overtime and distances
+    stdev_wasted_hours = sqrt(sum2_wasted_hours/n_employee - pow(sum_wasted_hours/n_employee,2));
+    stdev_overtime = sqrt(sum2_overtime/n_employee - pow(sum_overtime/n_employee,2));
+    stdev_distances = sqrt(sum2_distances/n_employee - pow(sum_distances/n_employee,2));
+
+    fitness = (zeta*stdev_wasted_hours + gamma*stdev_overtime + kappa*stdev_distances)/3;
+    return fitness;
+}
 
 
 
