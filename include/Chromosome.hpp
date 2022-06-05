@@ -15,7 +15,7 @@ class Chromosome
 public:
     float fitness;
     Gene* genes;//array of Gene
-    std::list<Time_window>* employee_timetables;//matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
+    std::vector<Time_window>* employee_timetables;//matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
 
     Chromosome();
     virtual ~Chromosome();

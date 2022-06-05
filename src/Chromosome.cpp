@@ -1,11 +1,11 @@
 #include "Chromosome.hpp"
-#include "global.hpp"
 
 Chromosome::Chromosome()
 {
     this->fitness = 0;
     this->genes = new Gene[n_mission];
-    this->employee_timetables = new std::list<Time_window> [n_employee*N_WEEK_DAY];
+    this->employee_timetables = new std::vector<Time_window> [n_employee*N_WEEK_DAY];
+    this->employee_timetables->reserve(n_mission);
 }
 
 bool time_window_compare(const Time_window &a, const Time_window &b)
@@ -18,7 +18,7 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
     int mission_minutes, daily_working_minutes;
     int affectation_failed = 0;
     bool is_timetable_compatible, affectation_founded, availability_checked, time_window_founded;
-    std::list<Time_window>::iterator period_iterator;
+    std::vector<Time_window>::iterator period_iterator;
 
     int weekly_working_minutes[n_employee] = {0};
     mission_minutes = 0;
@@ -29,6 +29,7 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
         affectation_founded = false;
         for (int k = 0; k < n_employee; k++)
         {
+            auto current_vector& = employee_timetables[(k)*N_WEEK_DAY + missions[j].day];
             /* Check if specialties are compatibles */
             if (employees[k].skill == missions[j].skill)
             {
@@ -45,7 +46,7 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
                     availability_checked = false;
 
 
-                    for(Time_window tw : this->employee_timetables[k*N_WEEK_DAY + missions[j].day]){
+                    for(Time_window tw : current_vector){
                         if(missions[j].start_minute < tw.start){//mission start before tw
                             float distance = distances[(missions[j].id+1)*n_location + tw.mission_id+1];//get distance mission-->tw
                             
@@ -99,10 +100,10 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
                     tm.start = missions[j].start_minute;
                     tm.end = missions[j].end_minute;
                     tm.mission_id = missions[j].id;
-                    this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day].push_back(tm);
+                    current_vector.push_back(tm);
 
                     if (daily_working_minutes > 0) /* If this isn't the first mission this day, we sort the list */
-                        this->employee_timetables[(k)*N_WEEK_DAY + missions[j].day].sort(time_window_compare);
+                        current_vector.sort(current_vector->begin(), current_vector.end(), time_window_compare);
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;
@@ -161,25 +162,25 @@ bool Chromosome::is_valid()
     return true;
 }
 
-float Chromosome::evaluate()
-{
-    float fitness=0;
-    float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
-    float mean_wasted_hours=0, mean_overtime=0, mean_distances=0;//mean
-    float mean2_wasted_hours=0, mean2_overtime=0, mean2_distances=0;//means square
+// float Chromosome::evaluate()
+// {
+//     float fitness=0;
+//     float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
+//     float mean_wasted_hours=0, mean_overtime=0, mean_distances=0;//mean
+//     float mean2_wasted_hours=0, mean2_overtime=0, mean2_distances=0;//means square
 
-    std::list<Time_window>::iterator it;
+//     std::list<Time_window>::iterator it;
 
-    for(int i=0; i<n_employee; ++i){
-        for(int j=0; j<N_WEEK_DAY; ++j){
-            for (it = employee_timetables[i*N_WEEK_DAY + j].begin(); it !=employee_timetables[i*N_WEEK_DAY + j].end(); ++it){
-                mean_wasted_hours += it->end;//TODO
-            }
-        }
-    }
+//     for(int i=0; i<n_employee; ++i){
+//         for(int j=0; j<N_WEEK_DAY; ++j){
+//             for (it = employee_timetables[i*N_WEEK_DAY + j].begin(); it !=employee_timetables[i*N_WEEK_DAY + j].end(); ++it){
+//                 mean_wasted_hours += it->end+distance;
+//             }
+//         }
+//     }
 
-    return fitness;
-}
+//     return fitness;
+// }
 
 
 
