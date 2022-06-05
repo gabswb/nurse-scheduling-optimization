@@ -29,7 +29,7 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
         affectation_founded = false;
         for (int k = 0; k < n_employee; k++)
         {
-            auto current_vector& = employee_timetables[(k)*N_WEEK_DAY + missions[j].day];
+            auto& current_vector = employee_timetables[(k)*N_WEEK_DAY + missions[j].day];
             /* Check if specialties are compatibles */
             if (employees[k].skill == missions[j].skill)
             {
@@ -103,7 +103,7 @@ void Chromosome::initialize(Mission missions[], Employee employees[], float dist
                     current_vector.push_back(tm);
 
                     if (daily_working_minutes > 0) /* If this isn't the first mission this day, we sort the list */
-                        current_vector.sort(current_vector->begin(), current_vector.end(), time_window_compare);
+                        std::sort(current_vector.begin(), current_vector.end(), time_window_compare);
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;
