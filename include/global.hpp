@@ -5,6 +5,13 @@ extern int n_employee;
 extern int n_mission;
 extern int n_location;
 
+extern int population_size;
+extern float crossover_rate;
+extern float mutation_rate;
+extern int max_execution_time;
+extern int max_iteration_number;
+extern bool verbose;
+
 enum Skills
 {
     LSF,

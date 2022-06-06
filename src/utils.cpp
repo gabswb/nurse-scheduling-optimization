@@ -1,5 +1,47 @@
 #include "utils.hpp"
 
+void extract_options(int argc, char* argv[])
+{
+    if(argc < 4 || argc > 14) {
+        std::cerr << usage_msg << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 1; i < argc; ++i) {
+        if(strcmp(argv[i], "-p") == 0) {
+            if(i+3 >= argc) {
+                std::cerr << usage_msg << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            population_size = std::stoi(argv[i+1]);
+            crossover_rate = std::stof(argv[i+2]);
+            mutation_rate = std::stof(argv[i+3]);
+            i += 3;
+
+        } else if(strcmp(argv[i], "-t") == 0) {
+            if(i+1 >= argc) {
+                std::cerr << usage_msg << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            max_execution_time = std::stoi(argv[i+1]);
+            i += 1;
+        } else if(strcmp(argv[i], "-i") == 0) {
+            if(i+1 >= argc) {
+                std::cerr << usage_msg << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            max_iteration_number = std::stoi(argv[i+1]);
+            i += 1;
+        } else if(strcmp(argv[i], "-v") == 0) {
+            verbose = true;
+        } else if(strcmp(argv[i], "-h") == 0) {
+            std::cout << usage_msg << std::endl;
+            exit(EXIT_SUCCESS);
+        }
+    }
+}
+
+
 int extract_rows_nb_csv(std::string path_p)
 {
     int rows = 0;
