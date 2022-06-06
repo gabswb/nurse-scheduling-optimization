@@ -4,12 +4,14 @@
 #include <math.h>
 #include <string.h>
 #include <list>
+#include <chrono>
 #include "global.hpp"
 #include "Gene.hpp"
 #include "Employee.hpp"
 #include "Chromosome.hpp"
 #include "Mission.hpp"
 #include "utils.hpp"
+#include "solver.hpp"
 
 int n_employee = 0;//number of employee
 int n_mission = 0;//number of missions
@@ -21,6 +23,7 @@ float mutation_rate = 0.5;
 int max_execution_time = (3*60*60);//3h 
 int max_iteration_number = 1000000;
 bool verbose = false;
+
 
 /*
  * Usage: ./argv[0] [options] <distance_file> <employee_file> <mission_file>
@@ -47,13 +50,17 @@ int main(int argc, char *argv[])
     const Employee* employees = extract_employee_csv(n_employee, argv[argc-2]);
     const Mission* missions = extract_mission_csv(n_mission, argv[argc-1]);
 
-    // /* Generate initial solution with first fit algorithm */
-    // std::cout << "\nGenerate initial solution with first fit algotihm\n";
-    // Chromosome initial_solution = Chromosome(&missions, &employees, &distances);
-    // initial_solution.initialize();
-    // std::cout << initial_solution<< std::endl;
-    // std::cout << "\nDone\n";
-    // std::cout << "Evaluation: " << initial_solution.evaluate() << std::endl;
+    auto begin_exec = std::chrono::steady_clock::now();//benchmark algorithm's execution time
+    //genetic_algorithm(missions, employees, distances, begin_exec);
+    auto end_exec = std::chrono::steady_clock::now();
+
+    /* Generate initial solution with first fit algorithm */
+    std::cout << "\nGenerate initial solution with first fit algotihm\n";
+    Chromosome initial_solution = Chromosome(missions, employees, distances);
+    initial_solution.initialize();
+    std::cout << initial_solution<< std::endl;
+    std::cout << "\nDone\n";
+    std::cout << "Evaluation: " << initial_solution.evaluate() << std::endl;
 
 
     delete[] missions;

@@ -25,7 +25,7 @@ public:
     /*correlation coefficient for fitness*/
     float alpha, beta, gamma, zeta, kappa;
 
-    Chromosome(const Mission* missions[], const Employee* employees[], const float* distances[]);
+    Chromosome(const Mission missions[], const Employee employees[], const float distances[]);
     virtual ~Chromosome();
 
     /**

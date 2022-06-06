@@ -1,13 +1,13 @@
 #include "Chromosome.hpp"
 
-Chromosome::Chromosome(const Mission* missions_p[], const Employee* employees_p[], const float* distances_p[])
+Chromosome::Chromosome(const Mission missions_p[], const Employee employees_p[], const float distances_p[])
 {
     this->fitness = 0;
     this->genes = new Gene[n_mission];
     this->employee_timetables = new std::vector<Time_window> [n_employee*N_WEEK_DAY];
-    this->missions = *missions_p;
-    this->employees = *employees_p;
-    this->distances = *distances_p;
+    this->missions = missions_p;
+    this->employees = employees_p;
+    this->distances = distances_p;
 
     for(int i=0; i<n_employee*N_WEEK_DAY;++i){
         employee_timetables[i].reserve(n_mission/(N_WEEK_DAY*n_employee));//reserve memory assuming that missions are uniformly distributed by employee and day
