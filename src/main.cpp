@@ -16,7 +16,13 @@ int n_mission = 0;
 int n_location = 0;
 
 /*
- * Usage:   <distance_file> <employee_file> <mission_file>
+ * Usage: ./argv[0] <distance_file> <employee_file> <mission_file>
+ *  [-p arg1 arg2 arg2] ,arg1 = population size, arg2 = crossover rate, arg3 = mutation rate
+ *  [-t arg3]           ,arg3 = max execution time
+ *  [-i arg4]           ,arg4 = max iteration number
+ *  [-v]                ,verbose mode
+ *  [-h]                ,print this usage message and exit                     
+ *  
  * 45-4j:   ./it45-operation-research ../instances/45-4/Distances.csv ../instances/45-4/Intervenants.csv ../instances/45-4/Missions.csv
  * 96-6j:   ./it45-operation-research ../instances/96-6/Distances.csv ../instances/96-6/Intervenants.csv ../instances/96-6/Missions.csv
  * 100-10j: ./it45-operation-research ../instances/100-10/Distances.csv ../instances/100-10/Intervenants.csv ../instances/100-10/Missions.csv

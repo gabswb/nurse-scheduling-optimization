@@ -30,6 +30,7 @@ Time_window;
         
 
 
+
 /* Timetable definitions */
 #define N_WEEK_DAY 5 // 6 ?
 #define START_HOUR 8
@@ -54,5 +55,10 @@ Time_window;
 #define END_MINUTE 1
 #define TRAVEL_SPEED (50*(1000/60))
     //#define SATURDAY 6 //?
+#define DEFAULT_ITERATION_NUMBER 1000
+#define DEFAULT_POPULATION_SIZE 20
+#define DEFAULT_RUNNING_TIME 120
+#define DEFAULT_CROSSOVER_RATE 0.8
+#define DEFAULT_MUTATION_RATE 0.8
 
 #endif /*GLOBAL_HPP*/

@@ -219,41 +219,44 @@ bool Chromosome::is_valid()
 
 float Chromosome::evaluate()
 {
-    float fitness=0, delta_time, employee_worktime, temp_distance;
+    float fitness=0, delta_time, temp_distance;
     float stdev_wasted_hours=0, stdev_overtime=0, stdev_distances=0;//standard derivations
     float sum_wasted_hours=0, sum_overtime=0, sum_distances=0;//sums
     float sum2_wasted_hours=0, sum2_overtime=0, sum2_distances=0;//quadratics sums
-    float temp_sum2_wasted_hours, temp_sum2_distances;//we are computing standart derivation by employee by week so we need to store an intermadiate value of the sum and then compute the square in the employee for loop sums
+    float partial_sum_wasted_hours, partial_sum_distances; int partial_sum_employee_worktime;//we are computing standart derivation by employee by week so we need to store an intermadiate value of the sum and then compute the square in the employee for loop sums
 
     //compute in one pass the sum and the quadratic sum of wasted hours, overtime and distances 
     //remark : the divisons by 1000 and by 60 are for conversion from metter or minute to km or hour
     for(int i=0; i<n_employee; ++i){
-        employee_worktime=0;
-        temp_sum2_wasted_hours=0;
-        temp_sum2_distances=0;
+        partial_sum_employee_worktime=0;
+        partial_sum_wasted_hours=0;
+        partial_sum_distances=0;
         for(int j=0; j<N_WEEK_DAY; ++j){
 
             auto &vec = employee_timetables[i*N_WEEK_DAY + j];//reference on current vector for more readability
-            for(size_t k=0; k<vec.size()-1; ++k)
+            int k;
+            for(k=0; k<int(vec.size())-1; ++k)
             {
                 temp_distance = this->distances[(vec[k].mission_id+1)*n_location + vec[k+1].mission_id+1];//distance form i to i+1
-                sum_distances += temp_distance/1000;
-                temp_sum2_distances += pow(temp_distance/1000,2);
+                partial_sum_distances += temp_distance/1000;
 
                 delta_time =  vec[k+1].start - temp_distance/TRAVEL_SPEED - vec[k].start; //start time of i+1 - travel time from i-->i+1 - end time of i
-                sum_wasted_hours += delta_time/60;
-                temp_sum2_wasted_hours += pow(delta_time/60,2);
-
-                employee_worktime += vec[k].end - vec[k].start;
+                partial_sum_wasted_hours += delta_time/60;
+                
+                partial_sum_employee_worktime += vec[k].end - vec[k].start;   
             }
+            if(vec.size()>0) partial_sum_employee_worktime += vec[k].end - vec[k].start;//to get the hours of vec[vec.size()-1]
         }
-        if(employee_worktime - employees[i].quota>0){
-            sum_overtime += (employee_worktime - employees[i].quota)/60;
-            sum2_overtime += pow((employee_worktime - employees[i].quota)/60, 2);
-        }
-        sum2_wasted_hours = pow(temp_sum2_wasted_hours,2);
-        sum2_distances = pow(temp_sum2_distances,2);
 
+        if(partial_sum_employee_worktime - employees[i].quota>0){
+            sum_overtime += (partial_sum_employee_worktime - employees[i].quota)/60;
+            sum2_overtime += pow((partial_sum_employee_worktime - employees[i].quota)/60, 2);
+        }
+        sum2_wasted_hours += pow(partial_sum_wasted_hours,2);
+        sum_wasted_hours += partial_sum_wasted_hours;
+
+        sum2_distances += pow(partial_sum_distances,2);
+        sum_distances += partial_sum_distances;
     }
 
     //compute the standart derivation = sqrt(E(X²)-E(X)²), X the wasted hours, overtime and distances
