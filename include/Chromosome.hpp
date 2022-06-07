@@ -14,17 +14,23 @@ class Chromosome
 {
 public:
     float fitness;
-    Gene* genes;//array of Gene
-    std::vector<Time_window>* employee_timetables;//matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
+    Gene *genes;                                   // array of Gene
+    std::vector<Time_window> *employee_timetables; // matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
 
-    const Mission* missions;//reference to missions array of main
-    const Employee* employees;//reference to employees array of main
-    const float* distances;//reference to distances matrix of main
-    
+    const Mission *missions;   // reference to missions array of main
+    const Employee *employees; // reference to employees array of main
+    const float *distances;    // reference to distances matrix of main
+
     /*correlation coefficient for fitness*/
     float alpha, beta, gamma, zeta, kappa;
 
+    /* Constructor */
     Chromosome(const Mission missions[], const Employee employees[], const float distances[]);
+
+    /* Coplien form */
+    Chromosome();
+    Chromosome(const Chromosome &chr);
+    Chromosome& operator=(const Chromosome &chr);
     virtual ~Chromosome();
 
     /**
@@ -46,7 +52,7 @@ public:
      * @param employee
      */
     void print_employee_timetable(int employee);
-    
+
     /**
      * @brief Display all the informations of the chromosome (all the employees timetable)
      */
@@ -61,8 +67,6 @@ public:
      * @brief apply mutation on the chromosome
      */
     void mutate();
-
-
 };
 
 #endif /*CHROMOSOME_HPP*/

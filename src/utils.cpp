@@ -1,46 +1,58 @@
 #include "utils.hpp"
 
-void extract_options(int argc, char* argv[])
+void extract_options(int argc, char *argv[])
 {
-    if(argc < 4 || argc > 14) {
+    if (argc < 4 || argc > 14)
+    {
         std::cerr << usage_msg << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    for(int i = 1; i < argc; ++i) {
-        if(strcmp(argv[i], "-p") == 0) {
-            if(i+3 >= argc) {
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(argv[i], "-p") == 0)
+        {
+            if (i + 3 >= argc)
+            {
                 std::cerr << usage_msg << std::endl;
                 exit(EXIT_FAILURE);
             }
-            population_size = std::stoi(argv[i+1]);
-            crossover_rate = std::stof(argv[i+2]);
-            mutation_rate = std::stof(argv[i+3]);
+            population_size = std::stoi(argv[i + 1]);
+            crossover_rate = std::stof(argv[i + 2]);
+            mutation_rate = std::stof(argv[i + 3]);
             i += 3;
-
-        } else if(strcmp(argv[i], "-t") == 0) {
-            if(i+1 >= argc) {
+        }
+        else if (strcmp(argv[i], "-t") == 0)
+        {
+            if (i + 1 >= argc)
+            {
                 std::cerr << usage_msg << std::endl;
                 exit(EXIT_FAILURE);
             }
-            max_execution_time = std::stoi(argv[i+1]);
+            max_execution_time = std::stoi(argv[i + 1]);
             i += 1;
-        } else if(strcmp(argv[i], "-i") == 0) {
-            if(i+1 >= argc) {
+        }
+        else if (strcmp(argv[i], "-i") == 0)
+        {
+            if (i + 1 >= argc)
+            {
                 std::cerr << usage_msg << std::endl;
                 exit(EXIT_FAILURE);
             }
-            max_iteration_number = std::stoi(argv[i+1]);
+            max_iteration_number = std::stoi(argv[i + 1]);
             i += 1;
-        } else if(strcmp(argv[i], "-v") == 0) {
+        }
+        else if (strcmp(argv[i], "-v") == 0)
+        {
             verbose = true;
-        } else if(strcmp(argv[i], "-h") == 0) {
+        }
+        else if (strcmp(argv[i], "-h") == 0)
+        {
             std::cout << usage_msg << std::endl;
             exit(EXIT_SUCCESS);
         }
     }
 }
-
 
 int extract_rows_nb_csv(std::string path_p)
 {
@@ -139,19 +151,19 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
 }
 float *extract_distance_matrix_csv(int size_p, std::string path_p)
 {
-    float *distances = new float[(size_p + 1) * (size_p + 1)]; //+1 for sessad
+    float *distances = new float[size_p * size_p];
     std::ifstream file(path_p);
     std::string data;
 
     for (int i = 0; i < size_p; ++i)
     {
-        for (int j = 0; j < size_p-1; ++j)
+        for (int j = 0; j < size_p - 1; ++j)
         {
             getline(file, data, ',');
             distances[i * size_p + j] = std::stof(data);
         }
         getline(file, data, '\n');
-        distances[i * size_p + size_p-1] = std::stof(data);
+        distances[i * size_p + size_p - 1] = std::stof(data);
     }
 
     return distances;
