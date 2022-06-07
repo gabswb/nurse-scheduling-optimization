@@ -10,6 +10,7 @@ set(SOURCES
 	src/Employee.cpp
 	src/Gene.cpp
     src/Chromosome.cpp
+    src/solver.cpp
     src/utils.cpp
 )
 
@@ -20,6 +21,7 @@ set(HEADERS
     include/Gene.hpp
     include/Chromosome.hpp
     include/utils.hpp
+    include/solver.hpp
 )
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
