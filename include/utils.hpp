@@ -51,7 +51,7 @@ template <typename T>
 void print_matrix(int size_p, const T *matrix_p);
 
 const std::string usage_msg = "\n\n"
-"Usage: ./argv[0] [options] <required_distance_file> <resquired_employee_file> <resquired_mission_file>\n\n"
+"Usage: %s [options] <required_distance_file> <resquired_employee_file> <resquired_mission_file>\n\n"
 
 "   options : \n"
 "       [-p arg1 arg2 arg2] ,arg1 = population size, arg2 = crossover rate, arg3 = mutation rate\n"

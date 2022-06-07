@@ -4,7 +4,6 @@
 #include "Gene.hpp"
 #include "global.hpp"
 #include <vector>
-// #include <list>
 #include <unistd.h>
 #include <iterator>
 #include <iostream>

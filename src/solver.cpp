@@ -9,11 +9,7 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 
     while(n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     {
-        //if(verbose) ...
-
-        crossover();
-
-        mutate();
+        
     }
 
 
