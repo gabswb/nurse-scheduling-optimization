@@ -51,7 +51,8 @@ void initialize_population(Chromosome *population, const Mission missions_p[], c
         std::copy(employees_p, employees_p + n_employee, employees);
         std::shuffle(missions, missions + n_mission, std::default_random_engine(i));
         std::shuffle(employees, employees + n_employee, std::default_random_engine(i));
-        population[i] = Chromosome(missions, employees, distances_p);
+        Chromosome chr = Chromosome(missions, employees, distances_p);
+        population[i] = chr;
     }
 }
 
