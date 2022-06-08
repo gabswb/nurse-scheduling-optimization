@@ -6,6 +6,7 @@
 #include "Employee.hpp"
 #include "global.hpp"
 #include <vector>
+#include <bits/stdc++.h>
 #include <chrono>
 #include <iterator>
 #include <random>

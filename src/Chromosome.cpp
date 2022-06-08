@@ -76,7 +76,7 @@ Chromosome::Chromosome(const Mission missions_p[], const Employee employees_p[],
     this->initialize();
 }
 
-bool time_window_compare(const Time_window &a, const Time_window &b)
+bool time_window_compare(Time_window &a,Time_window &b)
 {
     return a.start < b.start;
 };
@@ -91,14 +91,13 @@ void Chromosome::initialize()
 
     int weekly_working_minutes[n_employee] = {0};
     mission_minutes = 0;
-    std::cout << this->employee_timetables[4].size() << std::endl;
 
     for (int j = 0; j < n_mission; j++)
     {
         affectation_founded = false;
         for (int k = 0; k < n_employee; k++)
         {
-            auto &current_vector = employee_timetables[(k)*N_WEEK_DAY + missions[j].day];
+            auto &employee_timetable_day_j = employee_timetables[(employees[k].id)*N_WEEK_DAY + missions[j].day];
             /* Check if specialties are compatibles */
             if (employees[k].skill == missions[j].skill)
             {
@@ -115,8 +114,11 @@ void Chromosome::initialize()
                 {
                     availability_checked = false;
 
-                    for (Time_window tw : current_vector)
+                    for (Time_window tw : employee_timetable_day_j)
                     {
+                        /* Count daily working minutes */
+                        daily_working_minutes += (tw.end - tw.start);
+                        
                         /* Store lunch break working time (to check later that the employee has a least 1 hour lunch break) */
                         if ((tw.start >= LUNCH_BREAK_START && tw.start <= LUNCH_BREAK_END) ||
                             (tw.end >= LUNCH_BREAK_START && tw.end <= LUNCH_BREAK_END) ||
@@ -134,6 +136,25 @@ void Chromosome::initialize()
 
                             lunch_break_working_time += end_lunch_break - start_lunch_break;
                         }
+
+                        /* Check availability */
+                        // if (
+                        //     /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
+                        //     (tw.start <= missions[j].start_minute &&
+                        //      tw.end > missions[j].start_minute) ||
+                        //     /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
+                        //     (tw.start < missions[j].end_minute &&
+                        //      tw.end >= missions[j].end_minute) ||
+                        //     /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
+                        //     (tw.start >= missions[j].start_minute &&
+                        //      tw.end <= missions[j].end_minute))
+                        // {
+                        //     is_timetable_compatible = false;
+                        //     break;
+                        // }
+
+
+                        /* Test if employee is available and has enough travel time to arrive before the mission start and leave to arrive at the next mission on time */
 
                         if (missions[j].start_minute < tw.start)
                         {                                                                                // mission start before tw
@@ -203,10 +224,10 @@ void Chromosome::initialize()
                     tm.start = missions[j].start_minute;
                     tm.end = missions[j].end_minute;
                     tm.mission_id = missions[j].id;
-                    current_vector.push_back(tm);
+                    employee_timetable_day_j.push_back(tm);
 
                     if (daily_working_minutes > 0) /* If this isn't the first mission this day, we sort the list */
-                        std::sort(current_vector.begin(), current_vector.end(), time_window_compare);
+                        std::sort(employee_timetable_day_j.begin(), employee_timetable_day_j.end(), time_window_compare);
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;

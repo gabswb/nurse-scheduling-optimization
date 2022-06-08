@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <list>
+#include <iterator>
 #include <chrono>
 #include "global.hpp"
 #include "Gene.hpp"
@@ -56,7 +57,13 @@ int main(int argc, char *argv[])
 
     /* Generate initial solution with first fit algorithm */
     // std::cout << "\nGenerate initial solution with first fit algotihm\n";
-    // Chromosome initial_solution = Chromosome(missions, employees, distances);
+    // Mission missions_p[n_mission];
+    // Employee employees_p[n_employee];
+    // std::copy(missions, missions + n_mission, missions_p);
+    // std::copy(employees, employees + n_employee, employees_p);
+    // std::shuffle(missions_p, missions_p + n_mission, std::default_random_engine(0));
+    // std::shuffle(employees_p, employees_p + n_employee, std::default_random_engine(0));
+    // Chromosome initial_solution = Chromosome(missions_p, employees_p, distances);
     // std::cout << initial_solution << std::endl;
     // std::cout << "\nDone\n";
     // std::cout << "Evaluation: " << initial_solution.evaluate() << std::endl;
