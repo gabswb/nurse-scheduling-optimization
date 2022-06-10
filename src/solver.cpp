@@ -19,16 +19,6 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 
     if (n_iteration > max_iteration_number)
     {
-<<<<<<< HEAD
-        
-    }
-
-
-
-    
-    if(n_iteration > max_iteration_number){
-=======
->>>>>>> f50b456c729e5f8f824ebb9e485f0de541a44791
         std::cout << "Max iteration number reached" << std::endl;
         return;
     }
