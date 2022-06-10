@@ -36,7 +36,17 @@ void initialize_population(Chromosome* population, const Mission missions[], con
  * 
  * @param population chromosome array to display
  */
-void display(Chromosome* population);
+void display_population(Chromosome *population);
+
+/**
+ * @brief compute and display population fitness
+ * 
+ * @param population 
+ * @param average_population_fitness 
+ * @return float 
+ */
+void display_fitness(Chromosome *population, float &average_population_fitness);
+
 
 void crossover();
 void mutate();

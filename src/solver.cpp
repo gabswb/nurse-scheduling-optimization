@@ -4,9 +4,11 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 {
     int n_iteration = 0;
     Chromosome *population = new Chromosome[population_size];
+    float average_population_fitness = 0;
 
     initialize_population(population, missions, employees, distances);
-    display(population);
+    display_population(population);
+    display_fitness(population, average_population_fitness);
 
     // while (n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     // {
@@ -46,13 +48,22 @@ void initialize_population(Chromosome *population, const Mission missions_p[], c
     }
 }
 
-void display(Chromosome *population)
+void display_population(Chromosome *population)
 {
     for (int i = 0; i < population_size; ++i)
     {
         std::cout << "\n\n\n******************************************Chromosome " << i << "******************************************" << std::endl;
         std::cout << population[i];
     }
-    for (int i = 0; i < population_size; ++i)
-        std::cout << "Evaluation  chromosome " << i << ": " << population[i].evaluate() << std::endl;
+}
+
+void display_fitness(Chromosome *population, float &average_population_fitness)
+{
+    for(int i = 0 ; i < population_size; ++i)
+    {
+        average_population_fitness += population[i].evaluate();
+        std::cout << "Fitness " << i << ": " << population[i].evaluate() << "  validation: " << population[i].is_valid() << std::endl;
+    }
+    average_population_fitness /= population_size;
+    std::cout << "Average population evaluation: " << average_population_fitness << std::endl;
 }
