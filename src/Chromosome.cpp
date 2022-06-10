@@ -83,14 +83,12 @@ bool time_window_compare(Time_window &a,Time_window &b)
 
 void Chromosome::initialize()
 {
-    int mission_minutes, daily_working_minutes, lunch_break_working_time, start_lunch_break, end_lunch_break;
+    int daily_working_minutes, lunch_break_working_time, start_lunch_break, end_lunch_break;
     int affectation_failed = 0;
     float distance;
-    bool is_timetable_compatible, affectation_founded, availability_checked, time_window_founded;
-    std::vector<Time_window>::iterator period_iterator;
+    bool is_timetable_compatible, affectation_founded;
 
     int weekly_working_minutes[n_employee] = {0};
-    mission_minutes = 0;
 
     for (int j = 0; j < n_mission; j++)
     {
@@ -112,8 +110,6 @@ void Chromosome::initialize()
                 /* Check timetable constraints */
                 if (is_timetable_compatible)
                 {
-                    availability_checked = false;
-
                     for (Time_window tw : employee_timetable_day_j)
                     {
                         /* Count daily working minutes */
@@ -136,23 +132,6 @@ void Chromosome::initialize()
 
                             lunch_break_working_time += end_lunch_break - start_lunch_break;
                         }
-
-                        /* Check availability */
-                        // if (
-                        //     /* If the start mission period is during an employee mission, the mission encroaches upon an employee mission */
-                        //     (tw.start <= missions[j].start_minute &&
-                        //      tw.end > missions[j].start_minute) ||
-                        //     /* If the end mission period is during an employee mission, the mission encroaches upon an employee mission */
-                        //     (tw.start < missions[j].end_minute &&
-                        //      tw.end >= missions[j].end_minute) ||
-                        //     /* If the mission overtook a whole employee mission, the mission encroaches upon an employee mission*/
-                        //     (tw.start >= missions[j].start_minute &&
-                        //      tw.end <= missions[j].end_minute))
-                        // {
-                        //     is_timetable_compatible = false;
-                        //     break;
-                        // }
-
 
                         /* Test if employee is available and has enough travel time to arrive before the mission start and leave to arrive at the next mission on time */
 
@@ -216,9 +195,6 @@ void Chromosome::initialize()
                     this->genes[j] = Gene(missions[j], employees[k]);
                     affectation_founded = true;
 
-                    /* Fill the timetable */
-                    time_window_founded = false;
-
                     /* Affectation */
                     Time_window tm;
                     tm.start = missions[j].start_minute;
@@ -243,7 +219,6 @@ void Chromosome::initialize()
             printf("\n\t*****Affectation impossible*****");
             affectation_failed++;
         }
-        mission_minutes += missions[j].end_minute - missions[j].start_minute;
     }
 
     std::cout << "\nAffectation failed: " << affectation_failed << std::endl;
@@ -251,37 +226,72 @@ void Chromosome::initialize()
 
 bool Chromosome::is_valid()
 {
-    // int i = 0,
-    //     j = 0;
-    // TODO a finir
-    // for (Gene gene : this->genes)
-    // {
-    //         /* Check that each mission is affected (and is realized by only emlpoyee) and has the right speciality */
-    //         if (!gene.is_affected() && !gene.check_specialty())
-    //                 return false;
+    int daily_working_minutes, lunch_break_working_time, start_lunch_break, end_lunch_break;
+    int weekly_working_minutes[n_employee] = {0};
+    float distance;
 
-    //         /* Fill the employe timetables */
-    //         for (i = gene.mission.start_minute; i < gene.mission.end_minute; i++)
-    //         {
-    //                 if (this->employee_timetables[gene.employee.id][gene.mission.day][i])
-    //                         /* Not valid if the employee is already working during these working minutes */
-    //                         return false;
-    //                 else
-    //                         this->employee_timetables[gene.employee.id][gene.mission.day][i] = true;
-    //         }
-    // }
+    /*  Employee and mission must have the same skill */
+    for(int i = 0 ; i < n_mission ; ++i)
+        if(this->genes[i].employee.skill != this->genes[i].mission.skill)
+            return false;
 
-    // /* Check timetable constraints */
-    // for (i = 0; i < n_employee; i++)
-    // {
-    //     for (j = 0; j < N_WEEK_DAY; j++)
-    //     {
-    //         /* Check that employees have at least one minute lunch break every day (btw 12am and 2 pm) */
-    //         if (this->employee_timetables[i][j][LUNCH_BREAK_1] >= 0 && this->employee_timetables[i][j][LUNCH_BREAK_2] >= 0)
-    //             /* Not valid, the employee is working during the full lunch break */
-    //             return false;
-    //     }
-    // }
+    for (int k = 0 ; k < n_employee ; ++k)
+    {
+        for(int j = 0 ; j < N_WEEK_DAY ; ++j)
+        {
+            daily_working_minutes = 0;
+            lunch_break_working_time = 0;
+            auto &employee_timetable_day_j = employee_timetables[k*N_WEEK_DAY + j];
+            for(auto tw = employee_timetable_day_j.begin(); tw != employee_timetable_day_j.end(); ++tw)
+            {
+                /* Count daily working minutes */
+                daily_working_minutes += ((*tw).end - (*tw).start);
+                
+                /* Store lunch break working time (to check later that the employee has a least 1 hour lunch break) */
+                if (((*tw).start >= LUNCH_BREAK_START && (*tw).start <= LUNCH_BREAK_END) ||
+                    ((*tw).end >= LUNCH_BREAK_START && (*tw).end <= LUNCH_BREAK_END) ||
+                    ((*tw).start <= LUNCH_BREAK_START && (*tw).end >= LUNCH_BREAK_END))
+                {
+                    if ((*tw).start > LUNCH_BREAK_START)
+                        start_lunch_break = (*tw).start;
+                    else
+                        start_lunch_break = LUNCH_BREAK_START;
+
+                    if ((*tw).end < LUNCH_BREAK_END)
+                        end_lunch_break = (*tw).end;
+                    else
+                        end_lunch_break = LUNCH_BREAK_END; 
+                    lunch_break_working_time += end_lunch_break - start_lunch_break;
+                }
+
+                /* Mission schedule must respect the time window */
+                if((*tw).end > END_HOUR*60 || (*tw).start < START_HOUR*60)
+                    return false;
+
+                if(tw != employee_timetable_day_j.end() && tw != (employee_timetable_day_j.end() - 1))
+                {
+                    /* Employee must have a mission once a time and enough travel time btw each */                        
+                    distance = distances[((*tw).mission_id + 1) * n_location + (*(tw+1)).mission_id + 1];
+                    if ((*tw).end + distance / TRAVEL_SPEED > (*(tw+1)).start)
+                        return false;
+                }
+            }
+
+            /* Employe must have at least 1 hour lunch break */
+            if ((LUNCH_BREAK_END - LUNCH_BREAK_START) - lunch_break_working_time < LUNCH_BREAK_TIME)
+                return false;
+
+            /* Employee schedule must respect daily working time and overtime */
+            if(daily_working_minutes > FULL_TIME_WOKRING_MINUTES_DAY + DAILY_OVERTIME)
+            
+                return false;
+            weekly_working_minutes[k] += daily_working_minutes;
+        }
+        /* Employee schedule must respect daily working time and overtime */
+        if (weekly_working_minutes[k] > FULL_TIME_WOKRING_MINUTES_WEEK + WEEKLY_OVERTIME)
+            return false;
+    }
+
 
     return true;
 }

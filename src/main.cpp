@@ -55,18 +55,8 @@ int main(int argc, char *argv[])
     genetic_algorithm(missions, employees, distances, begin_exec);
     auto end_exec = std::chrono::steady_clock::now();
 
-    /* Generate initial solution with first fit algorithm */
-    // std::cout << "\nGenerate initial solution with first fit algotihm\n";
-    // Mission missions_p[n_mission];
-    // Employee employees_p[n_employee];
-    // std::copy(missions, missions + n_mission, missions_p);
-    // std::copy(employees, employees + n_employee, employees_p);
-    // std::shuffle(missions_p, missions_p + n_mission, std::default_random_engine(0));
-    // std::shuffle(employees_p, employees_p + n_employee, std::default_random_engine(0));
-    // Chromosome initial_solution = Chromosome(missions_p, employees_p, distances);
-    // std::cout << initial_solution << std::endl;
-    // std::cout << "\nDone\n";
-    // std::cout << "Evaluation: " << initial_solution.evaluate() << std::endl;
+    std::chrono::duration<double> diff = end_exec - begin_exec;
+    std::cout << "Execution time [seconds]: " << diff.count() << std::endl;
 
     delete[] missions;
     delete[] employees;
