@@ -136,24 +136,41 @@ void Chromosome::initialize()
                         /* Test if employee is available and has enough travel time to arrive before the mission start and leave to arrive at the next mission on time */
 
                         if (missions[j].start_minute < tw.start)
-                        {                                                                                // mission start before tw
+                        {    
+                            printf("%d < %d\n", missions[j].start_minute, tw.start);                                                                            // mission start before tw
                             distance = distances[(missions[j].id + 1) * n_location + tw.mission_id + 1]; // get distance mission-->tw
-
+                            if( missions[j].id == 16){
+                                printf("\n########################################\n");
+                                std::cout << "end : " << missions[j].end_minute << " + " << distance << " / " << TRAVEL_SPEED << " = "<< missions[j].end_minute + distance / TRAVEL_SPEED << ", start : " <<  missions[j].start_minute << std::endl;
+                                printf("\n########################################\n");
+                            }
                             if (missions[j].end_minute + distance / TRAVEL_SPEED >= tw.start)
-                            {
+                            {   
+                                printf("false\n");
                                 is_timetable_compatible = false;
                                 break;
                             }
+                            printf("true\n");
                         }
                         else
-                        {                                                                                // tw start before mission
+                        {                           
+                                                        printf("%d < %d\n",tw.start, missions[j].start_minute);                                                                            // mission start before tw
+                                                     // tw start before mission
                             distance = distances[(tw.mission_id + 1) * n_location + missions[j].id + 1]; // get distance tw-->mission
+                            if( missions[j].id == 16){
+                                printf("\n########################################\n");
+                                std::cout << "end : " << missions[j].end_minute << " + " << distance << " / " << TRAVEL_SPEED << " = "<< missions[j].end_minute + distance / TRAVEL_SPEED << ", start : " <<  missions[j].start_minute << std::endl;
+                                printf("\n########################################\n");
 
-                            if ((missions[j].start_minute + distance / TRAVEL_SPEED) <= tw.end)
+                            }                            
+                            //if ((missions[j].start_minute + distance / TRAVEL_SPEED) <= tw.end)
+                        if(tw.end + distance/TRAVEL_SPEED >= missions[j].start_minute)
                             {
+                                printf("false\n");
                                 is_timetable_compatible = false;
                                 break;
                             }
+                            printf("true\n");
                         }
                     }
                 }
@@ -272,8 +289,13 @@ bool Chromosome::is_valid()
                 {
                     /* Employee must have a mission once a time and enough travel time btw each */                        
                     distance = distances[((*tw).mission_id + 1) * n_location + (*(tw+1)).mission_id + 1];
-                    if ((*tw).end + distance / TRAVEL_SPEED > (*(tw+1)).start)
+
+                    if ((*tw).end + distance / TRAVEL_SPEED > (*(tw+1)).start){
+                        printf("\n");
+                        std::cout << "dist (" << (*tw).mission_id  << "," <<(*(tw+1)).mission_id << ") = " << distance << std::endl; 
+                        std::cout << "end : " << (*tw).end << " + " << distance << " / " << TRAVEL_SPEED << " = "<< (*tw).end + distance / TRAVEL_SPEED << ", start : " <<  (*(tw+1)).start << std::endl;
                         return false;
+                    }
                 }
             }
 
@@ -283,8 +305,8 @@ bool Chromosome::is_valid()
 
             /* Employee schedule must respect daily working time and overtime */
             if(daily_working_minutes > FULL_TIME_WOKRING_MINUTES_DAY + DAILY_OVERTIME)
-            
                 return false;
+
             weekly_working_minutes[k] += daily_working_minutes;
         }
         /* Employee schedule must respect daily working time and overtime */
