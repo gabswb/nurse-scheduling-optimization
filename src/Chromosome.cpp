@@ -137,40 +137,21 @@ void Chromosome::initialize()
 
                         if (missions[j].start_minute < tw.start)
                         {    
-                            printf("%d < %d\n", missions[j].start_minute, tw.start);                                                                            // mission start before tw
                             distance = distances[(missions[j].id + 1) * n_location + tw.mission_id + 1]; // get distance mission-->tw
-                            if( missions[j].id == 16){
-                                printf("\n########################################\n");
-                                std::cout << "end : " << missions[j].end_minute << " + " << distance << " / " << TRAVEL_SPEED << " = "<< missions[j].end_minute + distance / TRAVEL_SPEED << ", start : " <<  missions[j].start_minute << std::endl;
-                                printf("\n########################################\n");
-                            }
-                            if (missions[j].end_minute + distance / TRAVEL_SPEED >= tw.start)
-                            {   
-                                printf("false\n");
+                            if (missions[j].end_minute + distance / TRAVEL_SPEED >= tw.start) {   
                                 is_timetable_compatible = false;
                                 break;
                             }
-                            printf("true\n");
                         }
                         else
-                        {                           
-                                                        printf("%d < %d\n",tw.start, missions[j].start_minute);                                                                            // mission start before tw
-                                                     // tw start before mission
-                            distance = distances[(tw.mission_id + 1) * n_location + missions[j].id + 1]; // get distance tw-->mission
-                            if( missions[j].id == 16){
-                                printf("\n########################################\n");
-                                std::cout << "end : " << missions[j].end_minute << " + " << distance << " / " << TRAVEL_SPEED << " = "<< missions[j].end_minute + distance / TRAVEL_SPEED << ", start : " <<  missions[j].start_minute << std::endl;
-                                printf("\n########################################\n");
-
-                            }                            
+                        {                                                                                // tw start before mission
+                            distance = distances[(tw.mission_id + 1) * n_location + missions[j].id + 1]; // get distance tw-->mission                         
                             //if ((missions[j].start_minute + distance / TRAVEL_SPEED) <= tw.end)
-                        if(tw.end + distance/TRAVEL_SPEED >= missions[j].start_minute)
+                            if(tw.end + distance/TRAVEL_SPEED >= missions[j].start_minute)
                             {
-                                printf("false\n");
                                 is_timetable_compatible = false;
                                 break;
                             }
-                            printf("true\n");
                         }
                     }
                 }
