@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     std::random_device rd;
     std::default_random_engine generator(rd());
 
-
+    
 
     /* Solving problem */
     auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time

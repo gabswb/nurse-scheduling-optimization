@@ -10,7 +10,13 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 
     initialize_population(population, missions, employees, distances);
     //display_population(population);
-    display_fitness(population, fitness_average);
+    //display_fitness(population, fitness_average);
+
+    for(int i=0; i<population_size; ++i){
+        std::cout << "fitness: " << population[i].evaluate_employees() << std::endl;
+        std::cout << "fitness client = " <<population[i].evaluate_clients() << std::endl;
+        std::cout << "fitness sessad = " <<population[i].evaluate_sessad() << std::endl;
+    }
 
     while (n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     {
@@ -41,9 +47,9 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
         if(modified){ 
             replacement_roulette_selection(population, child1, generator);
             replacement_roulette_selection(population, child2, generator);  
-            printf("modified\n");
         }
-        display_fitness(population, fitness_average);
+        //display_fitness(population, fitness_average);
+
 
     }
 
