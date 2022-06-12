@@ -95,7 +95,7 @@ Chromosome* roulette_selection(Chromosome population[], std::default_random_engi
     std::uniform_real_distribution<float> uniform_dist(0, 1);
 
     for(int i = 0; i < population_size; ++i){
-        fitness_sum += 1/population[i].evaluate();
+        fitness_sum += 1/population[i].evaluate_employees();
     }
     for(int i = 0; i < population_size; ++i){
         proba_array[i] = proba_sum + (1/population[i].fitness) / fitness_sum;
@@ -152,7 +152,7 @@ void replacement_roulette_selection(Chromosome* population, Chromosome child, st
     std::uniform_real_distribution<float> uniform_dist(0, 1);
 
     for(int i = 0; i < population_size; ++i){
-        fitness_sum += population[i].evaluate();
+        fitness_sum += population[i].evaluate_employees();
     }
     for(int i = 0; i < population_size; ++i){
         proba_array[i] = proba_sum + population[i].fitness / fitness_sum;
@@ -188,8 +188,8 @@ void display_fitness(Chromosome *population, float &average_population_fitness)
 {
     for(int i = 0 ; i < population_size; ++i)
     {
-        average_population_fitness += population[i].evaluate();
-        std::cout << "Fitness " << i << ": " << population[i].evaluate() << "  validation: " << population[i].is_valid() << std::endl;
+        average_population_fitness += population[i].evaluate_employees();
+        std::cout << "Fitness " << i << ": " << population[i].evaluate_employees() << "  validation: " << population[i].is_valid() << std::endl;
     }
     average_population_fitness /= population_size;
     std::cout << "Average population evaluation: " << average_population_fitness << std::endl;

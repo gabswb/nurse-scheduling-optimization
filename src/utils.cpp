@@ -90,15 +90,15 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
         else
             printf("****Parsing error (mission skill) ****\n");
 
-        if (s_specialty.compare("Musique") == 1)
+        if (s_specialty == "Musique")
             specialty = MUSIC;
-        else if (s_specialty.compare("Jardinage") == 1)
+        else if (s_specialty == "Jardinage")
             specialty = GARDENING;
-        else if (s_specialty.compare("Electricite") == 1)
+        else if (s_specialty == "Electricite")
             specialty = ELECTRICITY;
-        else if (s_specialty.compare("Menuiserie") == 1)
+        else if (s_specialty == "Menuiserie")
             specialty = CARPENTRY;
-        else if (s_specialty.compare("Mecanique") == 1)
+        else if (s_specialty == "Mecanique")
             specialty = MECANIC;
         else
             printf("****Parsing error (mission specialty)****\n");

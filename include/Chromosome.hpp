@@ -61,7 +61,11 @@ public:
     /**
      * @brief compute the fitness of the chromosome
      */
-    float evaluate();
+    float evaluate_employees();
+
+    float evaluate_clients();
+
+    float evaluate_sessad();
 
     /**
      * @brief apply mutation on the chromosome

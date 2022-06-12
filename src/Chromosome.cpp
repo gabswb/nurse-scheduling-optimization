@@ -303,7 +303,7 @@ bool Chromosome::is_valid()
     return true;
 }
 
-float Chromosome::evaluate()
+float Chromosome::evaluate_employees()
 {
     float delta_time, temp_distance;
     float stdev_wasted_hours = 0, stdev_overtime = 0, stdev_distances = 0; // standard derivations
@@ -358,6 +358,14 @@ float Chromosome::evaluate()
     this->fitness = (zeta * stdev_wasted_hours + gamma * stdev_overtime + kappa * stdev_distances) / 3;
     return this->fitness;
 }
+
+
+float evaluate_clients()
+{
+    
+}
+
+float evaluate_sessad();
 
 std::ostream &operator<<(std::ostream &output, Chromosome &c)
 {
