@@ -20,7 +20,7 @@
  * @param distances distances matrix (in one-dimension array form)
  * @param begin_exec launch time
  */
-void genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::chrono::steady_clock::time_point begin_exec);
+void genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::default_random_engine& generator, std::chrono::steady_clock::time_point begin_exec);
 
 /**
  * @brief Initialize a heterogene population of chromosomes
@@ -48,12 +48,18 @@ void display_population(Chromosome *population);
  */
 void display_fitness(Chromosome *population, float &average_population_fitness);
 
+Chromosome* roulette_selection(Chromosome population[], std::default_random_engine& generator);
 
-void crossover();
+void crossover_1X(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, Chromosome* child2);
+
+void crossover_NX(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, Chromosome* child2);
+
+
+void replacement_selection(Chromosome population[], Chromosome child1, Chromosome child2);
 
 /**
  * @brief perform mutation on few random chromosmes
  */
-void mutate();
+void mutate(Chromosome* chromosome);
 
 #endif /*SOLVER_HPP*/

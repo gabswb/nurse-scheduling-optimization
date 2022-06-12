@@ -6,6 +6,7 @@
 #include <list>
 #include <iterator>
 #include <chrono>
+#include <random>
 #include "global.hpp"
 #include "Gene.hpp"
 #include "Employee.hpp"
@@ -50,9 +51,14 @@ int main(int argc, char *argv[])
     const Employee *employees = extract_employee_csv(n_employee, argv[argc - 2]);
     const Mission *missions = extract_mission_csv(n_mission, argv[argc - 1]);
 
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+
+
+
     /* Solving problem */
     auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
-    genetic_algorithm(missions, employees, distances, begin_exec);
+    genetic_algorithm(missions, employees, distances, generator, begin_exec);
     auto end_exec = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> diff = end_exec - begin_exec;

@@ -1,6 +1,10 @@
 #include "Chromosome.hpp"
 
-Chromosome::Chromosome() {}
+Chromosome::Chromosome() : fitness(0)
+{
+    this->employee_timetables = new std::vector<Time_window>[n_employee * N_WEEK_DAY];
+}
+
 
 Chromosome::Chromosome(const Chromosome &chr) 
 {
@@ -301,7 +305,7 @@ bool Chromosome::is_valid()
 
 float Chromosome::evaluate()
 {
-    float fitness = 0, delta_time, temp_distance;
+    float delta_time, temp_distance;
     float stdev_wasted_hours = 0, stdev_overtime = 0, stdev_distances = 0; // standard derivations
     float sum_wasted_hours = 0, sum_overtime = 0, sum_distances = 0;       // sums
     float sum2_wasted_hours = 0, sum2_overtime = 0, sum2_distances = 0;    // quadratics sums
@@ -351,8 +355,8 @@ float Chromosome::evaluate()
     stdev_overtime = sqrt(sum2_overtime / n_employee - pow(sum_overtime / n_employee, 2));
     stdev_distances = sqrt(sum2_distances / n_employee - pow(sum_distances / n_employee, 2));
 
-    fitness = (zeta * stdev_wasted_hours + gamma * stdev_overtime + kappa * stdev_distances) / 3;
-    return fitness;
+    this->fitness = (zeta * stdev_wasted_hours + gamma * stdev_overtime + kappa * stdev_distances) / 3;
+    return this->fitness;
 }
 
 std::ostream &operator<<(std::ostream &output, Chromosome &c)
@@ -408,6 +412,6 @@ void Chromosome::print_employee_timetable(int employee)
 
 Chromosome::~Chromosome()
 {
-    delete[] this->employee_timetables;
     std::cout << "Free chromosome" << std::endl;
+    delete[] this->employee_timetables;
 }
