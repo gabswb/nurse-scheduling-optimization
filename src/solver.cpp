@@ -96,22 +96,16 @@ Chromosome* roulette_selection(Chromosome population[], std::default_random_engi
 
     for(int i = 0; i < population_size; ++i){
         fitness_sum += 1/population[i].evaluate();
-        //std::cout << "fitness = " << 1/population[i].evaluate() << std::endl;
     }
     for(int i = 0; i < population_size; ++i){
         proba_array[i] = proba_sum + (1/population[i].fitness) / fitness_sum;
         proba_sum += (1/population[i].fitness) / fitness_sum;
-        //std::cout << "proba = " << (1/population[i].fitness) / fitness_sum << std::endl;
-        //std::cout << "proba_array" << i << " = " << proba_array[i] << std::endl;
     }
-    //std::cout << "proba_sum = " << proba_sum << std::endl;
 
     size_t index = 0;
     float random = uniform_dist(generator);
-    //std::cout << "random = " << random << std::endl;
     while(proba_array[index] < random) index++;
 
-    //std::cout << "index selection = " << index << std::endl;
     return &population[index];
 }
 
@@ -159,22 +153,16 @@ void replacement_roulette_selection(Chromosome* population, Chromosome child, st
 
     for(int i = 0; i < population_size; ++i){
         fitness_sum += population[i].evaluate();
-       // std::cout << "fitness = " << 1/population[i].evaluate() << std::endl;
     }
     for(int i = 0; i < population_size; ++i){
         proba_array[i] = proba_sum + population[i].fitness / fitness_sum;
         proba_sum += population[i].fitness / fitness_sum;
-        //std::cout << "proba = " << (1/population[i].fitness) / fitness_sum << std::endl;
-       // std::cout << "proba_array" << i << " = " << proba_array[i] << std::endl;
     }
-    //std::cout << "proba_sum = " << proba_sum << std::endl;
 
     size_t index = 0;
     float random = uniform_dist(generator);
-    //std::cout << "random = " << random << std::endl;
     while(proba_array[index] < random) index++;
 
-    //std::cout << "index replacement = " << index << std::endl;
     population[index] = child;
 }
 

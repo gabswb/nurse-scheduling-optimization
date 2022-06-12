@@ -48,13 +48,41 @@ void display_population(Chromosome *population);
  */
 void display_fitness(Chromosome *population, float &average_population_fitness);
 
+/**
+ * @brief selects a chromosome by the biased roulette method. The probability of selecting a chromosome is inversely proportional to its fitness (because fitness minimization)
+ * 
+ * @param population in which the chromosome is selected
+ * @param generator random number generator
+ * @return Chromosome* the chromosome selected for a crossover
+ */
 Chromosome* roulette_selection(Chromosome population[], std::default_random_engine& generator);
 
+/**
+ * @brief Divide the 2 chromosomes in 1 point and create 2 different new child chromosomes as a combination of the 2 parents
+ * 
+ * @param parent1 
+ * @param parent2 
+ * @param child1 
+ * @param child2 
+ */
 void crossover_1X(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, Chromosome* child2);
 
+/**
+ * @brief Divide the 2 chromosomes in N points and create 2 different new child chromosomes as a combination of the 2 parents
+ * @note Here N is 4 because the employees work 5 days a week
+ * @param parent1 
+ * @param parent2 
+ * @param child1 
+ * @param child2 
+ */
 void crossover_NX(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, Chromosome* child2);
 
-
+/**
+ * @brief selects a chromosome by the biased roulette method. The probability of selecting a chromosome is proportional to its fitness (because fitness minimization). Thus, the less fit chromosome is more likely to be selected
+ * 
+ * @param population in which the chromosome is selected
+ * @param generator random number generator
+ */
 void replacement_roulette_selection(Chromosome population[], Chromosome child1, std::default_random_engine& generator);
 
 /**
