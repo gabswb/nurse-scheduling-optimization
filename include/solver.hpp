@@ -55,7 +55,7 @@ void crossover_1X(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, 
 void crossover_NX(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, Chromosome* child2);
 
 
-void replacement_selection(Chromosome population[], Chromosome child1, Chromosome child2);
+void replacement_roulette_selection(Chromosome population[], Chromosome child1, std::default_random_engine& generator);
 
 /**
  * @brief perform mutation on few random chromosmes

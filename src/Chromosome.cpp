@@ -412,6 +412,6 @@ void Chromosome::print_employee_timetable(int employee)
 
 Chromosome::~Chromosome()
 {
-    std::cout << "Free chromosome" << std::endl;
+    //std::cout << "Free chromosome" << std::endl;
     delete[] this->employee_timetables;
 }

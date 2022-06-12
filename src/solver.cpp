@@ -10,7 +10,7 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 
     initialize_population(population, missions, employees, distances);
     //display_population(population);
-    //display_fitness(population, fitness_average);
+    display_fitness(population, fitness_average);
 
     while (n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     {
@@ -38,7 +38,13 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
         //     modified = true;
         // }
 
-        //if(modified) replacement_selection(population, child1, child2);                
+        if(modified){ 
+            replacement_roulette_selection(population, child1, generator);
+            replacement_roulette_selection(population, child2, generator);  
+            printf("modified\n");
+        }
+        display_fitness(population, fitness_average);
+
     }
 
 
@@ -89,17 +95,23 @@ Chromosome* roulette_selection(Chromosome population[], std::default_random_engi
     std::uniform_real_distribution<float> uniform_dist(0, 1);
 
     for(int i = 0; i < population_size; ++i){
-        fitness_sum += population[i].evaluate();
+        fitness_sum += 1/population[i].evaluate();
+        //std::cout << "fitness = " << 1/population[i].evaluate() << std::endl;
     }
     for(int i = 0; i < population_size; ++i){
-        proba_array[i] = proba_sum + population[i].fitness / fitness_sum;
-        proba_sum += population[i].fitness / fitness_sum;
+        proba_array[i] = proba_sum + (1/population[i].fitness) / fitness_sum;
+        proba_sum += (1/population[i].fitness) / fitness_sum;
+        //std::cout << "proba = " << (1/population[i].fitness) / fitness_sum << std::endl;
+        //std::cout << "proba_array" << i << " = " << proba_array[i] << std::endl;
     }
+    //std::cout << "proba_sum = " << proba_sum << std::endl;
 
     size_t index = 0;
     float random = uniform_dist(generator);
+    //std::cout << "random = " << random << std::endl;
     while(proba_array[index] < random) index++;
 
+    //std::cout << "index selection = " << index << std::endl;
     return &population[index];
 }
 
@@ -138,9 +150,32 @@ void crossover_NX(Chromosome* parent1, Chromosome* parent2, Chromosome* child1, 
     }
 }
 
-void replacement_selection(Chromosome* population, Chromosome child1, Chromosome child2)
+void replacement_roulette_selection(Chromosome* population, Chromosome child, std::default_random_engine& generator)
 {
-    
+    float proba_sum = 0;
+    float fitness_sum = 0;
+    float proba_array[population_size] = {0};
+    std::uniform_real_distribution<float> uniform_dist(0, 1);
+
+    for(int i = 0; i < population_size; ++i){
+        fitness_sum += population[i].evaluate();
+       // std::cout << "fitness = " << 1/population[i].evaluate() << std::endl;
+    }
+    for(int i = 0; i < population_size; ++i){
+        proba_array[i] = proba_sum + population[i].fitness / fitness_sum;
+        proba_sum += population[i].fitness / fitness_sum;
+        //std::cout << "proba = " << (1/population[i].fitness) / fitness_sum << std::endl;
+       // std::cout << "proba_array" << i << " = " << proba_array[i] << std::endl;
+    }
+    //std::cout << "proba_sum = " << proba_sum << std::endl;
+
+    size_t index = 0;
+    float random = uniform_dist(generator);
+    //std::cout << "random = " << random << std::endl;
+    while(proba_array[index] < random) index++;
+
+    //std::cout << "index replacement = " << index << std::endl;
+    population[index] = child;
 }
 
 
