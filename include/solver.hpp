@@ -11,6 +11,7 @@
 #include <chrono>
 #include <iterator>
 #include <random>
+#include <algorithm>
 
 /**
  * @brief Solve the timetable problem with the given missions, employees and distances
@@ -20,7 +21,7 @@
  * @param distances distances matrix (in one-dimension array form)
  * @param begin_exec launch time
  */
-void genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::default_random_engine& generator, std::chrono::steady_clock::time_point begin_exec);
+Chromosome genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::default_random_engine& generator, std::chrono::steady_clock::time_point begin_exec);
 
 /**
  * @brief Initialize a heterogene population of chromosomes
@@ -88,6 +89,6 @@ void replacement_roulette_selection(Chromosome population[], Chromosome child1, 
 /**
  * @brief perform mutation on few random chromosmes
  */
-void mutate(Chromosome* chromosome);
+void mutate_test(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
 
 #endif /*SOLVER_HPP*/

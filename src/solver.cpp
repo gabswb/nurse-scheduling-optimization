@@ -1,6 +1,6 @@
 #include "solver.hpp"
 
-void genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::default_random_engine& generator, std::chrono::steady_clock::time_point begin_exec)
+Chromosome genetic_algorithm(const Mission missions[], const Employee employees[], const float distances[], std::default_random_engine& generator, std::chrono::steady_clock::time_point begin_exec)
 {
     bool modified = false;
     int n_iteration = 0;
@@ -10,13 +10,15 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
 
     initialize_population(population, missions, employees, distances);
     //display_population(population);
-    //display_fitness(population, fitness_average);
+    display_fitness(population, fitness_average);
 
     for(int i=0; i<population_size; ++i){
         std::cout << "fitness: " << population[i].evaluate_employees() << std::endl;
         std::cout << "fitness client = " <<population[i].evaluate_clients() << std::endl;
         std::cout << "fitness sessad = " <<population[i].evaluate_sessad() << std::endl;
     }
+
+    //mutate(&population[0], employees, generator);
 
     while (n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     {
@@ -49,30 +51,26 @@ void genetic_algorithm(const Mission missions[], const Employee employees[], con
             replacement_roulette_selection(population, child2, generator);  
         }
         //display_fitness(population, fitness_average);
-
-
     }
 
+    std::sort(population, population+population_size, employees_fitness_comparator);
 
-
-
-    if (n_iteration > max_iteration_number)
-    {
-        std::cout << "Max iteration number reached" << std::endl;
-        delete[] population;
-        return;
+    size_t new_pop_size = population_size*0.2;
+    Chromosome filtred_population[new_pop_size];//20% of the best chromosomes
+    for(size_t i=0; i<new_pop_size; ++i){
+        filtred_population[i] = population[i];
     }
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin_exec).count() > max_execution_time)
-    {
-        std::cout << "Max execution time reached" << std::endl;
-        delete[] population;
-        return;
-    }
+    std::sort(filtred_population, filtred_population+new_pop_size, clients_fitness_comparator);
+    std::sort(filtred_population, filtred_population+new_pop_size, sessad_fitness_comparator);
+    Chromosome result = filtred_population[0];
+
+    if (n_iteration > max_iteration_number) std::cout << "Max iteration number reached" << std::endl;
+    else std::cout << "Max execution time reached" << std::endl;
+
+    delete[] population;
+    return result;
+    return population[0];
 }
-
-
-
-
 
 
 
@@ -173,8 +171,75 @@ void replacement_roulette_selection(Chromosome* population, Chromosome child, st
 }
 
 
+void mutate_test(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator)
+{
+    int day;
+    int hour;
+    int employee_index2; 
+    int employee_index1;
+    std::uniform_int_distribution<int> uniform_dist_emp(0, n_employee-1);
+    std::uniform_int_distribution<int> uniform_dist_day(0, N_WEEK_DAY-1);
+    std::uniform_int_distribution<int> uniform_dist_hour(START_HOUR, END_HOUR-4);
 
+    do{    
+        day = uniform_dist_day(generator);
+        hour = uniform_dist_hour(generator);
+        employee_index2 = uniform_dist_emp(generator);
+        employee_index1 = uniform_dist_emp(generator);
+        while(employees[employee_index1].skill == employees[employee_index2].skill) employee_index2 = uniform_dist_emp(generator);
 
+        std::vector<Time_window> temp_ttb_1 = chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day];
+        std::vector<Time_window> temp_ttb_2 = chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day];
+
+        std::cout << "Info\n" << "emp : "<< employee_index1 << ","<< employee_index2 << ", day : "<< day << ", hour : "<< hour << "\n" << std::endl;
+
+        chromosome->print_employee_timetable(employee_index1);
+        chromosome->print_employee_timetable(employee_index2);    
+
+        int index_1 = 0;
+        int index_2 = 0;
+
+        while(index_1 < temp_ttb_1.size() && temp_ttb_1[index_1].start/60 < hour) {
+            std::cout << "size " << temp_ttb_1.size() << ", start " << temp_ttb_1[index_1].start/60 << std::endl;
+            ++index_1;
+        }
+        while(index_2 < temp_ttb_2.size() && temp_ttb_2[index_2].start/60 < hour){
+            std::cout << "size " << temp_ttb_2.size() << ", start " << temp_ttb_2[index_2].start/60 << std::endl;
+            ++index_2;
+        } 
+
+        std::cout << "index_1 : "<< index_1 << ", index_2 : "<< index_2 << "\n" << std::endl;
+
+        chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].erase(chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].begin() + index_1, chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].end());
+        chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].erase(chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].begin() + index_2, chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].end());
+
+        std::cout << "erase"<< std::endl;
+
+        chromosome->print_employee_timetable(employee_index1);
+        chromosome->print_employee_timetable(employee_index2);
+
+        for(int i=index_2; i < temp_ttb_1.size(); ++i){
+            chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].push_back(temp_ttb_2[i]);
+        }
+        for(int i=index_1; i < temp_ttb_2.size(); ++i){
+            chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].push_back(temp_ttb_1[i]);
+        }
+
+        //std::cout 
+
+        chromosome->print_employee_timetable(employee_index1);
+        chromosome->print_employee_timetable(employee_index2);
+
+        std::cout << "is valid" << std::endl;
+        
+        std::cout << "size 1 " << chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].size() << std::endl;
+        std::cout << "size 2 " << chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].size() << std::endl;
+
+        if(chromosome->is_valid()) std::cout << "Mutation successful\n" << std::endl;
+        else std::cout << "Mutation unsuccessful\n" << std::endl;
+    }
+    while(!chromosome->is_valid());    
+}
 
 
 

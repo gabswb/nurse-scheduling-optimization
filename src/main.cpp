@@ -51,18 +51,24 @@ int main(int argc, char *argv[])
     const Employee *employees = extract_employee_csv(n_employee, argv[argc - 2]);
     const Mission *missions = extract_mission_csv(n_mission, argv[argc - 1]);
 
+
+
     std::random_device rd;
     std::default_random_engine generator(rd());
 
-    
-
     /* Solving problem */
     auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
-    genetic_algorithm(missions, employees, distances, generator, begin_exec);
+    Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
     auto end_exec = std::chrono::steady_clock::now();
-
+    
+    
     std::chrono::duration<double> diff = end_exec - begin_exec;
-    std::cout << "Execution time [seconds]: " << diff.count() << std::endl;
+    std::cout << "Execution time : " << diff.count() << "s"
+              << "\nFinal solution :\n" << solution
+              << "\nEmployee fitness = "<< solution.evaluate_employees()
+              << "\nClient fitness = " << solution.evaluate_clients()
+              << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
+
 
     delete[] missions;
     delete[] employees;

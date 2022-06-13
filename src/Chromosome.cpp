@@ -62,16 +62,15 @@ Chromosome::Chromosome(const Mission missions_p[], const Employee employees_p[],
     /* Compute fitness correlation coefficient */
 
     alpha = 100 / n_mission;
-    beta = 100 / (N_WORKING_HOURS + WEEKLY_OVERTIME);
-    for (int i = 0; i < n_employee; ++i)
-    {
-        gamma += employees[i].quota;
+    beta = 100 / (FULL_TIME_WOKRING_MINUTES_WEEK/60 + WEEKLY_OVERTIME/60);
+    zeta = 0;
+    for (int i = 0; i < n_employee; ++i){
+        zeta += employees[i].quota/60;
     }
-    gamma = 100 / gamma;
-    zeta = 100 / WEEKLY_OVERTIME;
-    for (int i = 0; i < n_location; ++i)
-    {
-        kappa += distances_p[0 * n_location + 1] + distances_p[i * n_location + 0];
+    zeta = 100 / (zeta / n_employee);
+    gamma = 100 / (WEEKLY_OVERTIME/60);
+    for (int i = 0; i < n_location; ++i){
+        kappa += distances_p[0 * n_location + i] + distances_p[i * n_location + 0];
     }
     kappa = 100 / (kappa / n_employee);
 
@@ -84,6 +83,8 @@ bool time_window_compare(Time_window &a,Time_window &b)
 {
     return a.start < b.start;
 };
+
+
 
 void Chromosome::initialize()
 {
@@ -277,8 +278,8 @@ bool Chromosome::is_valid()
 
                     if ((*tw).end + distance / TRAVEL_SPEED > (*(tw+1)).start){
                         printf("\n");
-                        std::cout << "dist (" << (*tw).mission_id  << "," <<(*(tw+1)).mission_id << ") = " << distance << std::endl; 
-                        std::cout << "end : " << (*tw).end << " + " << distance << " / " << TRAVEL_SPEED << " = "<< (*tw).end + distance / TRAVEL_SPEED << ", start : " <<  (*(tw+1)).start << std::endl;
+                        //std::cout << "dist (" << (*tw).mission_id  << "," <<(*(tw+1)).mission_id << ") = " << distance << std::endl; 
+                        //std::cout << "end : " << (*tw).end << " + " << distance << " / " << TRAVEL_SPEED << " = "<< (*tw).end + distance / TRAVEL_SPEED << ", start : " <<  (*(tw+1)).start << std::endl;
                         return false;
                     }
                 }
@@ -327,7 +328,8 @@ float Chromosome::evaluate_employees()
             for (k = 0; k < int(vec.size()) - 1; ++k)
             {
                 temp_distance = this->distances[(vec[k].mission_id + 1) * n_location + vec[k + 1].mission_id + 1]; // distance form i to i+1
-                partial_sum_distances += temp_distance / 1000;
+                temp_distance = temp_distance / 1000;
+                partial_sum_distances += temp_distance;
 
                 delta_time = vec[k + 1].start - temp_distance / TRAVEL_SPEED - vec[k].start; // start time of i+1 - travel time from i-->i+1 - end time of i
                 partial_sum_wasted_hours += delta_time / 60;// conversion from minute to hour
@@ -408,6 +410,7 @@ float Chromosome::evaluate_sessad()
 
 }
 
+
 std::ostream &operator<<(std::ostream &output, Chromosome &c)
 {
     // for (int i = 0; i < n_mission; ++i)
@@ -464,3 +467,18 @@ Chromosome::~Chromosome()
     //std::cout << "Free chromosome" << std::endl;
     delete[] this->employee_timetables;
 }
+
+bool employees_fitness_comparator(Chromosome &a, Chromosome &b)
+{
+    return a.evaluate_employees() < b.evaluate_employees();
+};
+
+bool clients_fitness_comparator(Chromosome &a, Chromosome &b)
+{
+    return a.evaluate_clients() < b.evaluate_clients();
+};
+
+bool sessad_fitness_comparator(Chromosome &a, Chromosome &b)
+{
+    return a.evaluate_sessad() < b.evaluate_sessad();
+};

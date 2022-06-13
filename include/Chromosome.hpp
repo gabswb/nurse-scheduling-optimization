@@ -39,6 +39,7 @@ public:
      */
     bool is_valid();
 
+
     /**
      * @brief generate the initial solution with first fit algorithm
      * @param missions mission set
@@ -72,5 +73,11 @@ public:
      */
     void mutate();
 };
+
+bool employees_fitness_comparator(Chromosome &a, Chromosome &b);
+bool clients_fitness_comparator(Chromosome &a, Chromosome &b);
+bool sessad_fitness_comparator(Chromosome &a, Chromosome &b);
+
+
 
 #endif /*CHROMOSOME_HPP*/
