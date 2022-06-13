@@ -19,6 +19,8 @@ int n_employee = 0; // number of employee
 int n_mission = 0;  // number of missions
 int n_location = 0; // number of locations
 
+// ./it45-operation-research -i 50 -p 100 0.5 0.1  ../instances/45-4/Distances.csv ../instances/45-4/Intervenants.csv ../instances/45-4/Missions.csv
+
 int population_size = 5;
 float crossover_rate = 0.5;
 float mutation_rate = 0.5;

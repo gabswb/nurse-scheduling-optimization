@@ -3,6 +3,7 @@
 
 #include "Gene.hpp"
 #include "global.hpp"
+#include "utils.hpp"
 #include <vector>
 #include <unistd.h>
 #include <iterator>

@@ -149,6 +149,7 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
 
     return employees;
 }
+
 float *extract_distance_matrix_csv(int size_p, std::string path_p)
 {
     float *distances = new float[size_p * size_p];
@@ -184,3 +185,8 @@ void print_matrix(int size_p, const T *matrix_p)
         std::cout << "\n";
     }
 }
+
+bool time_window_compare(Time_window &a,Time_window &b)
+{
+    return a.start < b.start;
+};

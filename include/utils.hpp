@@ -50,6 +50,8 @@ float *extract_distance_matrix_csv(int size, std::string path);
 template <typename T>
 void print_matrix(int size_p, const T *matrix_p);
 
+bool time_window_compare(Time_window &a,Time_window &b);
+
 const std::string usage_msg = "\n\n"
 "Usage: %s [options] <required_distance_file> <resquired_employee_file> <resquired_mission_file>\n\n"
 
