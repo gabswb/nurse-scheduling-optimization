@@ -81,7 +81,7 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
         getline(file, s_starting_period, ',');
         getline(file, s_ending_period, ',');
         getline(file, s_skill, ',');
-        getline(file, s_specialty, '\n');
+        getline(file, s_specialty, '\r');
 
         if (s_skill == "LPC")
             skill = LPC;
@@ -90,15 +90,16 @@ Mission *extract_mission_csv(int size_p, std::string path_p)
         else
             printf("****Parsing error (mission skill) ****\n");
 
-        if (s_specialty == "Musique")
+
+        if (s_specialty == std::string("Musique"))
             specialty = MUSIC;
-        else if (s_specialty == "Jardinage")
+        else if (s_specialty == std::string("Jardinage"))
             specialty = GARDENING;
-        else if (s_specialty == "Electricite")
+        else if (s_specialty == std::string("Electricite"))
             specialty = ELECTRICITY;
-        else if (s_specialty == "Menuiserie")
+        else if (s_specialty == std::string("Menuiserie"))
             specialty = CARPENTRY;
-        else if (s_specialty == "Mecanique")
+        else if (s_specialty == std::string("Mecanique"))
             specialty = MECANIC;
         else
             printf("****Parsing error (mission specialty)****\n");
@@ -122,7 +123,7 @@ Employee *extract_employee_csv(int size_p, std::string path_p)
         getline(file, s_id, ',');
         getline(file, s_skill, ',');
         getline(file, s_specialty, ',');
-        getline(file, s_quota, '\n');
+        getline(file, s_quota, '\r');
 
         if (s_skill == "LPC")
             skill = LPC;
@@ -163,7 +164,7 @@ float *extract_distance_matrix_csv(int size_p, std::string path_p)
             getline(file, data, ',');
             distances[i * size_p + j] = std::stof(data);
         }
-        getline(file, data, '\n');
+        getline(file, data, '\r');
         distances[i * size_p + size_p - 1] = std::stof(data);
     }
 
