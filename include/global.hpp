@@ -65,4 +65,9 @@ typedef struct
 #define DEFAULT_CROSSOVER_RATE 0.8
 #define DEFAULT_MUTATION_RATE 0.8
 
+/* Others */
+#define MAX_MUTATION_ATTEMPT 20
+
+/* Functions */
+
 #endif /*GLOBAL_HPP*/

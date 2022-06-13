@@ -74,16 +74,7 @@ Chromosome::Chromosome(const Mission missions_p[], const Employee employees_p[],
         kappa += distances_p[0 * n_location + 1] + distances_p[i * n_location + 0];
     }
     kappa = 100 / (kappa / n_employee);
-
-    /* Create initiale solution */
-
-    this->initialize();
 }
-
-bool time_window_compare(Time_window &a,Time_window &b)
-{
-    return a.start < b.start;
-};
 
 void Chromosome::initialize()
 {
@@ -223,7 +214,8 @@ void Chromosome::initialize()
         }
     }
 
-    std::cout << "\nAffectation failed: " << affectation_failed << std::endl;
+    if(affectation_failed > 0)
+        std::cout << "\nAffectation failed: " << affectation_failed << std::endl;
 }
 
 bool Chromosome::is_valid()
@@ -365,6 +357,7 @@ float Chromosome::evaluate_clients()
     int n_penalty = 0;
     for(int i =0; i< n_employee;  ++i){
         for(int j=0; j< N_WEEK_DAY; ++j){
+
             for(auto const &tw : employee_timetables[i*N_WEEK_DAY + j]){
                 if(missions[tw.mission_id].specialty != employees[i].specialty) ++n_penalty;
             }
