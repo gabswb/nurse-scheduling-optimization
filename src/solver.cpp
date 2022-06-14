@@ -12,7 +12,6 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
     // display_population(population);
     // display_fitness(population, fitness_average);
 
-    // mutate(population[0],generator);
 
     for (int i = 0; i < population_size; ++i)
     {
@@ -201,12 +200,20 @@ void mutate_test(Chromosome* chromosome, const Employee employees[], std::defaul
         hour = uniform_dist_hour(generator);
         employee_index2 = uniform_dist_emp(generator);
         employee_index1 = uniform_dist_emp(generator);
-        while(employees[employee_index1].skill == employees[employee_index2].skill) employee_index2 = uniform_dist_emp(generator);
+        while(employees[employee_index1].skill == employees[employee_index2].skill || employee_index1 == employee_index2) employee_index2 = uniform_dist_emp(generator);
 
         std::vector<Time_window> temp_ttb_1 = chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day];
         std::vector<Time_window> temp_ttb_2 = chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day];
 
         std::cout << "Info\n" << "emp : "<< employee_index1 << ","<< employee_index2 << ", day : "<< day << ", hour : "<< hour << "\n" << std::endl;
+        std::cout << "size 2 " << temp_ttb_2.size() << std::endl;
+        for(size_t i=0; i< temp_ttb_2.size(); ++i){
+            std::cout << temp_ttb_2[i].start << "," << temp_ttb_2[i].end << std::endl;
+        }
+        std::cout << "size 1 " << temp_ttb_1.size() << std::endl;
+        for(size_t i=0; i< temp_ttb_1.size(); ++i){
+            std::cout << temp_ttb_1[i].start << "," << temp_ttb_1[i].end << std::endl;
+        }
 
         chromosome->print_employee_timetable(employee_index1);
         chromosome->print_employee_timetable(employee_index2);    
@@ -214,11 +221,11 @@ void mutate_test(Chromosome* chromosome, const Employee employees[], std::defaul
         int index_1 = 0;
         int index_2 = 0;
 
-        while(index_1 < temp_ttb_1.size() && temp_ttb_1[index_1].start/60 < hour) {
+        while(index_1 < (int(temp_ttb_1.size())-1) && temp_ttb_1[index_1].start/60 < hour) {
             std::cout << "size " << temp_ttb_1.size() << ", start " << temp_ttb_1[index_1].start/60 << std::endl;
             ++index_1;
         }
-        while(index_2 < temp_ttb_2.size() && temp_ttb_2[index_2].start/60 < hour){
+        while(index_2 < (int(temp_ttb_2.size())-1) && temp_ttb_2[index_2].start/60 < hour){
             std::cout << "size " << temp_ttb_2.size() << ", start " << temp_ttb_2[index_2].start/60 << std::endl;
             ++index_2;
         } 
@@ -232,15 +239,28 @@ void mutate_test(Chromosome* chromosome, const Employee employees[], std::defaul
 
         chromosome->print_employee_timetable(employee_index1);
         chromosome->print_employee_timetable(employee_index2);
+        
+        std::cout << "size 2 " << temp_ttb_2.size() << std::endl;
+        for(size_t i=0; i< temp_ttb_2.size(); ++i){
+            std::cout << temp_ttb_2[i].start/60 << "," << temp_ttb_2[i].end/60 << std::endl;
+        }
+        std::cout << "size 1 " << temp_ttb_1.size() << std::endl;
+        for(size_t i=0; i< temp_ttb_1.size(); ++i){
+            std::cout << temp_ttb_1[i].start/60 << "," << temp_ttb_1[i].end/60 << std::endl;
+        }
+        std::cout << "before insert"<< std::endl;
 
-        for(int i=index_2; i < temp_ttb_1.size(); ++i){
+        for(size_t i=index_2; i < temp_ttb_2.size(); ++i){
+            std::cout << "i : "<< i <<  " push back : " << temp_ttb_2[i].start << " " << temp_ttb_2[i].end <<std::endl;
             chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].push_back(temp_ttb_2[i]);
         }
-        for(int i=index_1; i < temp_ttb_2.size(); ++i){
+        std::cout << "end n2"<< std::endl;
+        for(size_t i=index_1; i < temp_ttb_1.size(); ++i){
+            std::cout << "i : "<< i <<  " push back : " << temp_ttb_1[i].start << " " << temp_ttb_1[i].end <<std::endl;
             chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].push_back(temp_ttb_1[i]);
         }
 
-        //std::cout 
+        std::cout << "insert"<< std::endl;
 
         chromosome->print_employee_timetable(employee_index1);
         chromosome->print_employee_timetable(employee_index2);

@@ -64,12 +64,12 @@ int main(int argc, char *argv[])
     auto end_exec = std::chrono::steady_clock::now();
     
     
-    std::chrono::duration<double> diff = end_exec - begin_exec;
-    std::cout << "Execution time : " << diff.count() << "s"
-              << "\nFinal solution :\n" << solution
-              << "\nEmployee fitness = "<< solution.evaluate_employees()
-              << "\nClient fitness = " << solution.evaluate_clients()
-              << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
+    // std::chrono::duration<double> diff = end_exec - begin_exec;
+    // std::cout << "Execution time : " << diff.count() << "s"
+    //           << "\nFinal solution :\n" << solution
+    //           << "\nEmployee fitness = "<< solution.evaluate_employees()
+    //           << "\nClient fitness = " << solution.evaluate_clients()
+    //           << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
 
 
     delete[] missions;
