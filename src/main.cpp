@@ -8,7 +8,6 @@
 #include <chrono>
 #include <random>
 #include "global.hpp"
-#include "Gene.hpp"
 #include "Employee.hpp"
 #include "Chromosome.hpp"
 #include "Mission.hpp"

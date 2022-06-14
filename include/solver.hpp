@@ -88,10 +88,15 @@ void crossover_NX(Chromosome *parent1, Chromosome *parent2, Chromosome *child1, 
 void replacement_roulette_selection(Chromosome population[], Chromosome child1, std::default_random_engine &generator);
 
 /**
- * @brief perform mutation on few random chromosmes
+ * @brief perform mutation on a given chromosme by swaping missions of two employees in a random time_window
+ * 
+ * @param chromosome chromosome tu mutate
+ * @param generator random number generator
  */
-void mutate_test(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
+void mutate(Chromosome* chromosome, std::default_random_engine& generator);
 
-void mutate(Chromosome &chromosome, std::default_random_engine &generator);
+
+void mutate_gab(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
+
 
 #endif /*SOLVER_HPP*/

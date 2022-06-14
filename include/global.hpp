@@ -32,7 +32,9 @@ typedef struct
     int start;
     int end;
     int mission_id;
-} Time_window;
+    Specialties specialty;
+    Skills skill;
+} Gene;
 
 /* Timetable definitions */
 #define N_WEEK_DAY 5 // 6 ?
