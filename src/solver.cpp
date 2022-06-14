@@ -39,14 +39,14 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
         if (uniform_dist(generator) < mutation_rate)
         {
-            //mutate(child1, generator);
-            mutate_test(&child1, employees, generator);
+            mutate(child1, generator);
+            //mutate_test(&child1, employees, generator);
             modified = true;
         }
         if (uniform_dist(generator) < mutation_rate)
         {
-            //mutate(child2, generator);
-            mutate_test(&child2, employees, generator);
+            mutate(child2, generator);
+            //mutate_test(&child2, employees, generator);
             modified = true;
         }
 
@@ -217,14 +217,17 @@ void mutate_test(Chromosome* chromosome, const Employee employees[], std::defaul
         emp2_ttb_day.erase(emp2_ttb_day.begin() + index_2, emp2_ttb_day.end());
 
         for(size_t i=index_2; i < temp_ttb_2.size(); ++i)
-            chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day].push_back(temp_ttb_2[i]);
+            emp1_ttb_day.push_back(temp_ttb_2[i]);
 
         for(size_t i=index_1; i < temp_ttb_1.size(); ++i)
-            chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day].push_back(temp_ttb_1[i]);
+            emp2_ttb_day.push_back(temp_ttb_1[i]);
 
 
-
-        if(chromosome->is_valid()) std::cout << "Mutation successful\n" << std::endl;
+        if(chromosome->is_valid()){
+            // chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day] = emp1_ttb_day;
+            // chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day] = emp2_ttb_day;
+            std::cout << "Mutation successful\n" << std::endl;
+        } 
         else std::cout << "Mutation unsuccessful\n" << std::endl;
         ++n_attempts;
     }
