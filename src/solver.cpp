@@ -38,14 +38,12 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
         if (uniform_dist(generator) < mutation_rate)
         {
-            // mutate(child1, generator);
             mutate(&child1, generator);
             // mutate_gab(&child1, employees, generator);
             modified = true;
         }
         if (uniform_dist(generator) < mutation_rate)
         {
-            // mutate(child2, generator);
             mutate(&child2, generator);
             // mutate_gab(&child2, employees, generator);
             modified = true;
@@ -206,8 +204,8 @@ void mutate_gab(Chromosome *chromosome, const Employee employees[], std::default
         while (employees[employee_index1].skill == employees[employee_index2].skill)
             employee_index2 = uniform_dist_emp(generator);
 
-        auto &emp1_ttb_day = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];
-        auto &emp2_ttb_day = chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day];
+        auto emp1_ttb_day = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];
+        auto emp2_ttb_day = chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day];
 
         std::vector<Gene> temp_ttb_1 = emp1_ttb_day;
         std::vector<Gene> temp_ttb_2 = emp2_ttb_day;
@@ -223,18 +221,19 @@ void mutate_gab(Chromosome *chromosome, const Employee employees[], std::default
         emp1_ttb_day.erase(emp1_ttb_day.begin() + index_1, emp1_ttb_day.end());
         emp2_ttb_day.erase(emp2_ttb_day.begin() + index_2, emp2_ttb_day.end());
 
-        for (size_t i = index_2; i < temp_ttb_2.size(); ++i)
-            chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day].push_back(temp_ttb_2[i]);
+        for(size_t i=index_2; i < temp_ttb_2.size(); ++i)
+            emp1_ttb_day.push_back(temp_ttb_2[i]);
 
-        for (size_t i = index_1; i < temp_ttb_1.size(); ++i)
-            chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day].push_back(temp_ttb_1[i]);
+        for(size_t i=index_1; i < temp_ttb_1.size(); ++i)
+            emp2_ttb_day.push_back(temp_ttb_1[i]);
 
-        if (chromosome->is_valid())
-            std::cout << "Mutation successful\n"
-                      << std::endl;
-        else
-            std::cout << "Mutation unsuccessful\n"
-                      << std::endl;
+
+        if(chromosome->is_valid()){
+            chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day] = emp1_ttb_day;
+            chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day] = emp2_ttb_day;
+            std::cout << "Mutation successful\n" << std::endl;
+        } 
+        else std::cout << "Mutation unsuccessful\n" << std::endl;
         ++n_attempts;
     } while (!chromosome->is_valid() && n_attempts < MAX_MUTATION_ATTEMPT);
 }

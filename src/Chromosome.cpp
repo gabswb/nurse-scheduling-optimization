@@ -318,14 +318,19 @@ float Chromosome::evaluate_employees()
                 temp_distance = this->distances[(vec[k].mission_id + 1) * n_location + vec[k + 1].mission_id + 1]; // distance form i to i+1
                 temp_distance = temp_distance / 1000;
                 partial_sum_distances += temp_distance;
+                
 
                 delta_time = vec[k + 1].start - temp_distance / TRAVEL_SPEED - vec[k].start; // start time of i+1 - travel time from i-->i+1 - end time of i
                 partial_sum_wasted_hours += delta_time / 60;// conversion from minute to hour
 
                 partial_sum_employee_worktime += vec[k].end - vec[k].start;
             }
-            if (vec.size() > 0)
+            if (vec.size() > 0){
                 partial_sum_employee_worktime += vec[k].end - vec[k].start; // to get the hours of vec[vec.size()-1]
+                partial_sum_distances += distances[0 * n_location + vec[0].mission_id + 1]; // distance from sessad to first mission
+                partial_sum_distances += distances[(vec[k].mission_id + 1) * n_location + 0]; // distance from last mission to sessad
+            }
+
         }
 
         if (partial_sum_employee_worktime - employees[i].quota > 0)
