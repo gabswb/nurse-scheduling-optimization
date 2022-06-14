@@ -66,7 +66,7 @@ typedef struct
 #define DEFAULT_MUTATION_RATE 0.8
 
 /* Others */
-#define MAX_MUTATION_ATTEMPT 20
+#define MAX_MUTATION_ATTEMPT 10
 
 /* Functions */
 
