@@ -93,10 +93,10 @@ void replacement_roulette_selection(Chromosome population[], Chromosome child1, 
  * @param chromosome chromosome tu mutate
  * @param generator random number generator
  */
-void mutate(Chromosome* chromosome, std::default_random_engine& generator);
+void mutate_rand_swap(Chromosome* chromosome, std::default_random_engine& generator);
 
 
-void mutate_gab(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
+void mutate_full_swap(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
 
 
 #endif /*SOLVER_HPP*/

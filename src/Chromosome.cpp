@@ -166,7 +166,7 @@ void Chromosome::initialize()
                         if ((LUNCH_BREAK_END - LUNCH_BREAK_START) - lunch_break_working_time < LUNCH_BREAK_TIME)
                         {
                             is_timetable_compatible = false;
-                            std::cout << "mission " << j << "and employee " << k << "aren't lunch break compatible\n";
+                            //std::cout << "mission " << j << "and employee " << k << "aren't lunch break compatible\n";
                         }
                     }
 
@@ -204,13 +204,13 @@ void Chromosome::initialize()
 
         if (!affectation_founded)
         {
-            printf("\n\t*****Affectation impossible*****");
+            //printf("\n\t*****Affectation impossible*****");
             affectation_failed++;
         }
     }
 
-    if(affectation_failed > 0)
-        std::cout << "\nAffectation failed: " << affectation_failed << std::endl;
+    // if(affectation_failed > 0)
+    //     std::cout << "\nAffectation failed: " << affectation_failed << std::endl;
 }
 
 bool Chromosome::is_valid()
@@ -265,7 +265,7 @@ bool Chromosome::is_valid()
                     distance = distances[((*gene).mission_id + 1) * n_location + (*(gene+1)).mission_id + 1];
 
                     if ((*gene).end + distance / TRAVEL_SPEED > (*(gene+1)).start){
-                        printf("\n");
+                        //printf("\n");
                         //std::cout << "dist (" << (*gene).mission_id  << "," <<(*(gene+1)).mission_id << ") = " << distance << std::endl; 
                         //std::cout << "end : " << (*gene).end << " + " << distance << " / " << TRAVEL_SPEED << " = "<< (*gene).end + distance / TRAVEL_SPEED << ", start : " <<  (*(gene+1)).start << std::endl;
                         return false;
@@ -457,7 +457,6 @@ void Chromosome::print_employee_timetable(int employee)
 
 Chromosome::~Chromosome()
 {
-    //std::cout << "Free chromosome" << std::endl;
     delete[] this->employee_timetables;
 }
 

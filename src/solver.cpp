@@ -10,7 +10,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
     initialize_population(population, missions, employees, distances, generator);
     // display_population(population);
-    display_fitness(population, fitness_average);
+    //display_fitness(population, fitness_average);
 
     // for(int i=0; i<population_size; i++)
     //     mutate_test(&population[0],employees, generator);
@@ -38,14 +38,12 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
         if (uniform_dist(generator) < mutation_rate)
         {
-            mutate(&child1, generator);
-            // mutate_gab(&child1, employees, generator);
+            mutate_rand_swap(&child1, generator);
             modified = true;
         }
         if (uniform_dist(generator) < mutation_rate)
         {
-            mutate(&child2, generator);
-            // mutate_gab(&child2, employees, generator);
+            mutate_rand_swap(&child2, generator);
             modified = true;
         }
 
@@ -54,7 +52,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
             replacement_roulette_selection(population, child1, generator);
             replacement_roulette_selection(population, child2, generator);
         }
-        display_fitness(population, fitness_average);
+        //display_fitness(population, fitness_average);
     }
 
     std::sort(population, population + population_size, employees_fitness_comparator);
@@ -184,61 +182,32 @@ void replacement_roulette_selection(Chromosome *population, Chromosome child, st
     population[index] = child;
 }
 
-void mutate_gab(Chromosome *chromosome, const Employee employees[], std::default_random_engine &generator)
+void mutate_full_swap(Chromosome *chromosome, const Employee employees[], std::default_random_engine &generator)
 {
     int day;
-    int hour;
-    int n_attempts = 0;
     int employee_index2;
     int employee_index1;
     std::uniform_int_distribution<int> uniform_dist_emp(0, n_employee - 1);
     std::uniform_int_distribution<int> uniform_dist_day(0, N_WEEK_DAY - 1);
-    std::uniform_int_distribution<int> uniform_dist_hour(START_HOUR, END_HOUR - 4);
 
-    do
-    {
-        day = uniform_dist_day(generator);
-        hour = uniform_dist_hour(generator);
+    day = uniform_dist_day(generator);
+    employee_index2 = uniform_dist_emp(generator);
+    employee_index1 = uniform_dist_emp(generator);
+    while (employees[employee_index1].skill != employees[employee_index2].skill || employee_index1 == employee_index2)
         employee_index2 = uniform_dist_emp(generator);
-        employee_index1 = uniform_dist_emp(generator);
-        while (employees[employee_index1].skill == employees[employee_index2].skill)
-            employee_index2 = uniform_dist_emp(generator);
 
-        auto emp1_ttb_day = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];
-        auto emp2_ttb_day = chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day];
+    Chromosome temp_chromosome = *chromosome;
 
-        std::vector<Gene> temp_ttb_1 = emp1_ttb_day;
-        std::vector<Gene> temp_ttb_2 = emp2_ttb_day;
+    temp_chromosome.employee_timetables[employee_index2 * N_WEEK_DAY + day] = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];
+    temp_chromosome.employee_timetables[employee_index1 * N_WEEK_DAY + day] = chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day];
 
-        int index_1 = 0;
-        int index_2 = 0;
-
-        while (index_1 < (int(temp_ttb_1.size()) - 1) && temp_ttb_1[index_1].start / 60 < hour)
-            ++index_1;
-        while (index_2 < (int(temp_ttb_2.size()) - 1) && temp_ttb_2[index_2].start / 60 < hour)
-            ++index_2;
-
-        emp1_ttb_day.erase(emp1_ttb_day.begin() + index_1, emp1_ttb_day.end());
-        emp2_ttb_day.erase(emp2_ttb_day.begin() + index_2, emp2_ttb_day.end());
-
-        for(size_t i=index_2; i < temp_ttb_2.size(); ++i)
-            emp1_ttb_day.push_back(temp_ttb_2[i]);
-
-        for(size_t i=index_1; i < temp_ttb_1.size(); ++i)
-            emp2_ttb_day.push_back(temp_ttb_1[i]);
-
-
-        if(chromosome->is_valid()){
-            chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day] = emp1_ttb_day;
-            chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day] = emp2_ttb_day;
-            //std::cout << "Mutation successful\n" << std::endl;
-        } 
-        //else std::cout << "Mutation unsuccessful\n" << std::endl;
-        ++n_attempts;
-    } while (!chromosome->is_valid() && n_attempts < MAX_MUTATION_ATTEMPT);
+    if(temp_chromosome.is_valid()){
+        chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day] = temp_chromosome.employee_timetables[employee_index1 * N_WEEK_DAY + day];
+        chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day] = temp_chromosome.employee_timetables[employee_index2 * N_WEEK_DAY + day];
+    } 
 }
 
-void mutate(Chromosome *chromosome, std::default_random_engine &generator)
+void mutate_rand_swap(Chromosome *chromosome, std::default_random_engine &generator)
 {
     bool mutated = false, error = false;
     int employee1, employee2, day, start_minute, attempt = 0, i, count, mission_count_1, mission_count_2;
@@ -332,21 +301,21 @@ void mutate(Chromosome *chromosome, std::default_random_engine &generator)
                 /* If not valid, we restore the old solution */
                 chromosome->employee_timetables[employee1 * N_WEEK_DAY + day] = old_employee1_timetable_day_j;
                 chromosome->employee_timetables[employee2 * N_WEEK_DAY + day] = old_employee2_timetable_day_j;
-                std::cout << "debug: mutation not valid\n";
+                //std::cout << "debug: mutation not valid\n";
             }
             /* Verbose */
             // std::cout << "after\n";
             // chromosome.print_employee_timetable(employee1);
             // chromosome.print_employee_timetable(employee2);
         }
-        else
-            std::cout << "error: attempt:" << attempt << "\n";
+        //else
+            //std::cout << "error: attempt:" << attempt << "\n";
 
         ++attempt;
     }
 
-    if (attempt == MAX_MUTATION_ATTEMPT)
-        std::cout << "*********Mutation failed !*********\n";
+    //if (attempt == MAX_MUTATION_ATTEMPT)
+        //std::cout << "*********Mutation failed !*********\n";
 }
 
 void display_population(Chromosome *population)

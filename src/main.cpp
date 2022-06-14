@@ -13,6 +13,7 @@
 #include "gene.hpp"
 #include "utils.hpp"
 #include "solver.hpp"
+#include "benchmark.cpp"
 
 int n_employee = 0; // number of employee
 int n_mission = 0;  // number of missions
@@ -57,18 +58,20 @@ int main(int argc, char *argv[])
     std::random_device rd;
     std::default_random_engine generator(rd());
 
-    /* Solving problem */
-    auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
-    Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
-    auto end_exec = std::chrono::steady_clock::now();
+    
+    benchmark(missions, employees, distances, generator, std::chrono::steady_clock::now());
+    // /* Solving problem */
+    // auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
+    // Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
+    // auto end_exec = std::chrono::steady_clock::now();
     
     
-    std::chrono::duration<double> diff = end_exec - begin_exec;
-    std::cout << "\nFinal solution :\n" << solution
-              << "Execution time : " << diff.count() << "s"
-              << "\nEmployee fitness = "<< solution.evaluate_employees()
-              << "\nClient fitness = " << solution.evaluate_clients()
-              << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
+    // std::chrono::duration<double> diff = end_exec - begin_exec;
+    // std::cout << "\nFinal solution :\n" << solution
+    //           << "Execution time : " << diff.count() << "s"
+    //           << "\nEmployee fitness = "<< solution.evaluate_employees()
+    //           << "\nClient fitness = " << solution.evaluate_clients()
+    //           << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
 
 
     delete[] missions;
