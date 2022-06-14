@@ -315,7 +315,6 @@ float Chromosome::evaluate_employees()
 
             auto const &vec = employee_timetables[i * N_WEEK_DAY + j]; // reference on current vector for more readability
             int k;
-            partial_sum_distances += distances[(0 * n_location + vec[0].mission_id + 1)]; // distance from sessad to i first mission
             for (k = 0; k < int(vec.size()) - 1; ++k)
             {
                 temp_distance = this->distances[(vec[k].mission_id + 1) * n_location + vec[k + 1].mission_id + 1]; // distance form i to i+1
@@ -330,7 +329,7 @@ float Chromosome::evaluate_employees()
             }
             if (vec.size() > 0){
                 partial_sum_employee_worktime += vec[k].end - vec[k].start; // to get the hours of vec[vec.size()-1]
-                partial_sum_distances += distances[(0 * n_location + vec[0].mission_id + 1)]; // distance from sessad to first mission
+                partial_sum_distances += distances[0 * n_location + vec[0].mission_id + 1]; // distance from sessad to first mission
                 partial_sum_distances += distances[(vec[k].mission_id + 1) * n_location + 0]; // distance from last mission to sessad
             }
 
