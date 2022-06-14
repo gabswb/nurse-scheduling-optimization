@@ -1,7 +1,6 @@
 #ifndef CHROMOSOME_HPP
 #define CHROMOSOME_HPP
 
-#include "Gene.hpp"
 #include "global.hpp"
 #include "utils.hpp"
 #include <vector>
@@ -15,12 +14,10 @@ class Chromosome
 {
 public:
     float fitness;
-    Gene *genes;                                   // array of Gene
-    std::vector<Time_window> *employee_timetables; // matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
-
-    const Mission *missions;   // reference to missions array of main
-    const Employee *employees; // reference to employees array of main
-    const float *distances;    // reference to distances matrix of main
+    std::vector<Gene> *employee_timetables; // matrix of n_employee*N_WEEK_DAY, access to each element with employee_timetables[i*n_employee + j], i the ith employee and j the jth day
+    const Mission *missions;
+    const Employee *employees;
+    const float *distances;
 
     /*correlation coefficient for fitness*/
     float alpha, beta, gamma, zeta, kappa;
@@ -61,12 +58,24 @@ public:
     friend std::ostream &operator<<(std::ostream &output, Chromosome &c);
 
     /**
-     * @brief compute the fitness of the chromosome
+     * @brief compute the employee fitness of the chromosome
+     * 
+     * @return float the fitness
      */
     float evaluate_employees();
 
+    /**
+     * @brief compute the clients fitness of the chromosome
+     * 
+     * @return float the fitness
+     */
     float evaluate_clients();
 
+    /**
+     * @brief compute the sessad fitness of the chromosome
+     * 
+     * @return float the fitness
+     */
     float evaluate_sessad();
 
     /**
@@ -75,6 +84,7 @@ public:
     void mutate();
 };
 
+/* Vector compare functions */
 bool employees_fitness_comparator(Chromosome &a, Chromosome &b);
 bool clients_fitness_comparator(Chromosome &a, Chromosome &b);
 bool sessad_fitness_comparator(Chromosome &a, Chromosome &b);

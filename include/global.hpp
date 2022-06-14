@@ -12,27 +12,6 @@ extern int max_execution_time;
 extern int max_iteration_number;
 extern bool verbose;
 
-enum Skills
-{
-    LSF,
-    LPC
-};
-
-enum Specialties
-{
-    ELECTRICITY,
-    CARPENTRY,
-    MUSIC,
-    MECANIC,
-    GARDENING
-};
-
-typedef struct
-{
-    int start;
-    int end;
-    int mission_id;
-} Time_window;
 
 /* Timetable definitions */
 #define N_WEEK_DAY 5 // 6 ?

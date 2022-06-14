@@ -8,10 +8,9 @@
 #include <chrono>
 #include <random>
 #include "global.hpp"
-#include "Gene.hpp"
-#include "Employee.hpp"
+#include "gene.hpp"
 #include "Chromosome.hpp"
-#include "Mission.hpp"
+#include "gene.hpp"
 #include "utils.hpp"
 #include "solver.hpp"
 
@@ -25,7 +24,7 @@ int population_size = 5;
 float crossover_rate = 0.5;
 float mutation_rate = 0.5;
 int max_execution_time = (3 * 60 * 60); // 3h
-int max_iteration_number = 1000000;
+int max_iteration_number = 100000;
 bool verbose = false;
 
 /*
@@ -65,8 +64,8 @@ int main(int argc, char *argv[])
     
     
     std::chrono::duration<double> diff = end_exec - begin_exec;
-    std::cout << "Execution time : " << diff.count() << "s"
-              << "\nFinal solution :\n" << solution
+    std::cout << "\nFinal solution :\n" << solution
+              << "Execution time : " << diff.count() << "s"
               << "\nEmployee fitness = "<< solution.evaluate_employees()
               << "\nClient fitness = " << solution.evaluate_clients()
               << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;

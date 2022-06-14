@@ -6,9 +6,7 @@ enable_testing()
 
 
 set(SOURCES
-	src/Mission.cpp
-	src/Employee.cpp
-	src/Gene.cpp
+	src/gene.cpp
     src/Chromosome.cpp
     src/solver.cpp
     src/utils.cpp
@@ -16,9 +14,7 @@ set(SOURCES
 
 set(HEADERS
     include/global.hpp
-    include/Mission.hpp
-    include/Employee.hpp
-    include/Gene.hpp
+    include/gene.hpp
     include/Chromosome.hpp
     include/utils.hpp
     include/solver.hpp
