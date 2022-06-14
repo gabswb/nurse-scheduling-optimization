@@ -32,7 +32,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
  * @param employees employees array
  * @param distances distances matrix (in one-dimension array form)
  */
-void initialize_population(Chromosome *population, const Mission missions[], const Employee employees[], const float distances[]);
+void initialize_population(Chromosome *population, const Mission missions_p[], const Employee employees_p[], const float distances_p[], std::default_random_engine& generator);
 
 /**
  * @brief Display a given population
