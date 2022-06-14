@@ -10,17 +10,11 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
     initialize_population(population, missions, employees, distances);
     // display_population(population);
-    // display_fitness(population, fitness_average);
+    display_fitness(population, fitness_average);
 
     // for(int i=0; i<population_size; i++)
     //     mutate_test(&population[0],employees, generator);
 
-    for (int i = 0; i < population_size; ++i)
-    {
-        std::cout << "fitness: " << population[i].evaluate_employees() << std::endl;
-        std::cout << "fitness client = " << population[i].evaluate_clients() << std::endl;
-        std::cout << "fitness sessad = " << population[i].evaluate_sessad() << std::endl;
-    }
 
     //mutate(&population[0], employees, generator);
 
@@ -45,12 +39,14 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
         if (uniform_dist(generator) < mutation_rate)
         {
-            mutate(child1, generator);
+            //mutate(child1, generator);
+            mutate_test(&child1, employees, generator);
             modified = true;
         }
         if (uniform_dist(generator) < mutation_rate)
         {
-            mutate(child2, generator);
+            //mutate(child2, generator);
+            mutate_test(&child2, employees, generator);
             modified = true;
         }
 
@@ -59,7 +55,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
             replacement_roulette_selection(population, child1, generator);
             replacement_roulette_selection(population, child2, generator);
         }
-        //display_fitness(population, fitness_average);
+        display_fitness(population, fitness_average);
     }
 
     std::sort(population, population+population_size, employees_fitness_comparator);
@@ -362,7 +358,7 @@ void display_fitness(Chromosome *population, float &average_population_fitness)
     for (int i = 0; i < population_size; ++i)
     {
         average_population_fitness += population[i].evaluate_employees();
-        std::cout << "Fitness " << i << ": " << population[i].evaluate_employees() << "  validation: " << population[i].is_valid() << std::endl;
+        //std::cout << "Fitness " << i << ": " << population[i].evaluate_employees() << "  validation: " << population[i].is_valid() << std::endl;
     }
     average_population_fitness /= population_size;
     std::cout << "Average population evaluation: " << average_population_fitness << std::endl;
