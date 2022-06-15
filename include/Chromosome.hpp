@@ -78,10 +78,6 @@ public:
      */
     float evaluate_sessad();
 
-    /**
-     * @brief apply mutation on the chromosome
-     */
-    void mutate();
 };
 
 /* Vector compare functions */

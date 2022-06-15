@@ -27,7 +27,7 @@ void benchmark(const Mission missions[], const Employee employees[], const float
     }
 
     for(int i = 0; i < 4*4; ++i) {
-        fitness_average[i] /= 4;
+        fitness_average[i] /= 2;
     }
 
     k=0;

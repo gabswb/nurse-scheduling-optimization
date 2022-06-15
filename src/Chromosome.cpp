@@ -191,7 +191,7 @@ void Chromosome::initialize()
                     employee_timetable_day_j.push_back(gene);
 
                     if (daily_working_minutes > 0) /* If this isn't the first mission this day, we sort the list */
-                        std::sort(employee_timetable_day_j.begin(), employee_timetable_day_j.end(), time_window_compare);
+                        std::sort(employee_timetable_day_j.begin(), employee_timetable_day_j.end(), gene_compare);
 
                     /* Increment weekly working minutes count */
                     weekly_working_minutes[employees[k].id] += missions[j].end_minute - missions[j].start_minute;

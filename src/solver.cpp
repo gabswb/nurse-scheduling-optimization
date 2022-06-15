@@ -9,13 +9,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
     std::uniform_real_distribution<float> uniform_dist(0, 1);
 
     initialize_population(population, missions, employees, distances, generator);
-    // display_population(population);
-    //display_fitness(population, fitness_average);
-
-    // for(int i=0; i<population_size; i++)
-    //     mutate_test(&population[0],employees, generator);
-
-    // mutate(&population[0], employees, generator);
+    if(verbose) display_population(population);
 
     while (n_iteration++ < max_iteration_number && std::chrono::steady_clock::now() - begin_exec < std::chrono::seconds(max_execution_time))
     {
@@ -52,7 +46,7 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
             replacement_roulette_selection(population, child1, generator);
             replacement_roulette_selection(population, child2, generator);
         }
-        //display_fitness(population, fitness_average);
+        if(verbose) display_fitness(population, fitness_average);
     }
 
     std::sort(population, population + population_size, employees_fitness_comparator);
@@ -74,7 +68,6 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
 
     delete[] population;
     return result;
-    return population[0];
 }
 
 void initialize_population(Chromosome *population, const Mission missions_p[], const Employee employees_p[], const float distances_p[], std::default_random_engine& generator)
@@ -164,6 +157,7 @@ void replacement_roulette_selection(Chromosome *population, Chromosome child, st
     float proba_array[population_size] = {0};
     std::uniform_real_distribution<float> uniform_dist(0, 1);
 
+    /*Compute the probability of being selected */
     for (int i = 0; i < population_size; ++i)
     {
         fitness_sum += population[i].evaluate_employees();
@@ -175,8 +169,8 @@ void replacement_roulette_selection(Chromosome *population, Chromosome child, st
     }
 
     size_t index = 0;
-    float random = uniform_dist(generator);
-    while (proba_array[index] < random)
+    float random = uniform_dist(generator);//select a random number between 0 and 1
+    while (proba_array[index] < random)//select the index of the chromosome that has the probability selected
         index++;
 
     population[index] = child;
@@ -190,18 +184,18 @@ void mutate_full_swap(Chromosome *chromosome, const Employee employees[], std::d
     std::uniform_int_distribution<int> uniform_dist_emp(0, n_employee - 1);
     std::uniform_int_distribution<int> uniform_dist_day(0, N_WEEK_DAY - 1);
 
-    day = uniform_dist_day(generator);
-    employee_index2 = uniform_dist_emp(generator);
-    employee_index1 = uniform_dist_emp(generator);
-    while (employees[employee_index1].skill != employees[employee_index2].skill || employee_index1 == employee_index2)
+    day = uniform_dist_day(generator);//generate random day
+    employee_index2 = uniform_dist_emp(generator);//generate random employee
+    employee_index1 = uniform_dist_emp(generator);//generate random employee
+    while (employees[employee_index1].skill != employees[employee_index2].skill || employee_index1 == employee_index2)//make sure the employees have the same skill and are not the same
         employee_index2 = uniform_dist_emp(generator);
 
     Chromosome temp_chromosome = *chromosome;
 
-    temp_chromosome.employee_timetables[employee_index2 * N_WEEK_DAY + day] = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];
+    temp_chromosome.employee_timetables[employee_index2 * N_WEEK_DAY + day] = chromosome->employee_timetables[employee_index1 * N_WEEK_DAY + day];//swap the days
     temp_chromosome.employee_timetables[employee_index1 * N_WEEK_DAY + day] = chromosome->employee_timetables[employee_index2 * N_WEEK_DAY + day];
 
-    if(temp_chromosome.is_valid()){
+    if(temp_chromosome.is_valid()){//if the new chromosome is valid, replace the old one
         chromosome->employee_timetables[employee_index1*N_WEEK_DAY + day] = temp_chromosome.employee_timetables[employee_index1 * N_WEEK_DAY + day];
         chromosome->employee_timetables[employee_index2*N_WEEK_DAY + day] = temp_chromosome.employee_timetables[employee_index2 * N_WEEK_DAY + day];
     } 
@@ -209,8 +203,9 @@ void mutate_full_swap(Chromosome *chromosome, const Employee employees[], std::d
 
 void mutate_rand_swap(Chromosome *chromosome, std::default_random_engine &generator)
 {
+    size_t i;
     bool mutated = false, error = false;
-    int employee1, employee2, day, start_minute, attempt = 0, i, count, mission_count_1, mission_count_2;
+    int employee1, employee2, day, start_minute, attempt = 0, count, mission_count_1, mission_count_2;
     std::uniform_int_distribution<int> random_employee(0, n_employee - 1);
     std::uniform_int_distribution<int> random_day(0, N_WEEK_DAY - 1);
     std::uniform_int_distribution<int> random_start_minute(START_HOUR * 60, (END_HOUR - 4) * 60);
@@ -279,8 +274,8 @@ void mutate_rand_swap(Chromosome *chromosome, std::default_random_engine &genera
                 ++mission_count_2;
             }
 
-            std::sort(employee1_timetable_day_j.begin(), employee1_timetable_day_j.end(), time_window_compare);
-            std::sort(employee2_timetable_day_j.begin(), employee2_timetable_day_j.end(), time_window_compare);
+            std::sort(employee1_timetable_day_j.begin(), employee1_timetable_day_j.end(), gene_compare);
+            std::sort(employee2_timetable_day_j.begin(), employee2_timetable_day_j.end(), gene_compare);
 
             /* Test if solution is valid (store old solution and affect new solution) */
             auto old_employee1_timetable_day_j = chromosome->employee_timetables[employee1 * N_WEEK_DAY + day];

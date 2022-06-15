@@ -187,7 +187,7 @@ void print_matrix(int size_p, const T *matrix_p)
     }
 }
 
-bool time_window_compare(Gene &a,Gene &b)
+bool gene_compare(Gene &a,Gene &b)
 {
     return a.start < b.start;
 };

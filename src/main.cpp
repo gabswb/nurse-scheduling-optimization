@@ -19,7 +19,6 @@ int n_employee = 0; // number of employee
 int n_mission = 0;  // number of missions
 int n_location = 0; // number of locations
 
-// ./it45-operation-research -i 50 -p 100 0.5 0.1  ../instances/45-4/Distances.csv ../instances/45-4/Intervenants.csv ../instances/45-4/Missions.csv
 
 int population_size = 5;
 float crossover_rate = 0.5;
@@ -37,9 +36,9 @@ bool verbose = false;
  *  [-v]                ,verbose mode
  *  [-h]                ,print this usage message and exit
  *
- * 45-4j:   ./it45-operation-research ../instances/45-4/Distances.csv ../instances/45-4/Intervenants.csv ../instances/45-4/Missions.csv
- * 96-6j:   ./it45-operation-research ../instances/96-6/Distances.csv ../instances/96-6/Intervenants.csv ../instances/96-6/Missions.csv
- * 100-10j: ./it45-operation-research ../instances/100-10/Distances.csv ../instances/100-10/Intervenants.csv ../instances/100-10/Missions.csv
+ * 45-4j:    ./it45-operation-research -i 100000 -p 100 0.5 0.1 ../instances/45-4/Distances.csv ../instances/45-4/Intervenants.csv ../instances/45-4/Missions.csv
+ * 96-6j:    ./it45-operation-research -i 100000 -p 100 0.5 0.1 ../instances/96-6/Distances.csv ../instances/96-6/Intervenants.csv ../instances/96-6/Missions.csv
+ * 100-10j:  ./it45-operation-research -i 100000 -p 100 0.5 0.1 ../instances/100-10/Distances.csv ../instances/100-10/Intervenants.csv ../instances/100-10/Missions.csv
  */
 int main(int argc, char *argv[])
 {
@@ -52,26 +51,27 @@ int main(int argc, char *argv[])
     const float *distances = extract_distance_matrix_csv(n_location, argv[argc - 3]);
     const Employee *employees = extract_employee_csv(n_employee, argv[argc - 2]);
     const Mission *missions = extract_mission_csv(n_mission, argv[argc - 1]);
-
+    std::cout << "Extraction done" << std::endl;
 
 
     std::random_device rd;
     std::default_random_engine generator(rd());
 
     
-    benchmark(missions, employees, distances, generator, std::chrono::steady_clock::now());
-    // /* Solving problem */
-    // auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
-    // Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
-    // auto end_exec = std::chrono::steady_clock::now();
+    //benchmark(missions, employees, distances, generator, std::chrono::steady_clock::now());
+    /* Solving problem */
+    std::cout << "Optimization of the solution ..." << std::endl;
+    auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
+    Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
+    auto end_exec = std::chrono::steady_clock::now();
     
     
-    // std::chrono::duration<double> diff = end_exec - begin_exec;
-    // std::cout << "\nFinal solution :\n" << solution
-    //           << "Execution time : " << diff.count() << "s"
-    //           << "\nEmployee fitness = "<< solution.evaluate_employees()
-    //           << "\nClient fitness = " << solution.evaluate_clients()
-    //           << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
+    std::chrono::duration<double> diff = end_exec - begin_exec;
+    std::cout << "\nFinal solution :\n" << solution
+              << "Execution time : " << diff.count() << "s"
+              << "\nEmployee fitness = "<< solution.evaluate_employees()
+              << "\nClient fitness = " << solution.evaluate_clients()
+              << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
 
 
     delete[] missions;

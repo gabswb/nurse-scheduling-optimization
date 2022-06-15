@@ -88,14 +88,20 @@ void crossover_NX(Chromosome *parent1, Chromosome *parent2, Chromosome *child1, 
 void replacement_roulette_selection(Chromosome population[], Chromosome child1, std::default_random_engine &generator);
 
 /**
- * @brief perform mutation on a given chromosme by swaping missions of two employees in a random time_window
+ * @brief perform mutation on a given chromosme by swaping missions of two employees from a random hour 
  * 
  * @param chromosome chromosome tu mutate
  * @param generator random number generator
  */
 void mutate_rand_swap(Chromosome* chromosome, std::default_random_engine& generator);
 
-
+/**
+ * @brief perform a mutation on a given chromosome by swapping all the missions of two employees in the same day
+ * 
+ * @param chromosome chromosome to mutate
+ * @param employees list of employee
+ * @param generator random number generator
+ */
 void mutate_full_swap(Chromosome* chromosome, const Employee employees[], std::default_random_engine& generator);
 
 

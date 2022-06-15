@@ -17,14 +17,33 @@ Optimization of Problems of Assignment, Planning and Routing tours of the Employ
   - `Intervenants.csv`: Employees(id,Skill,Specialty,Quota)
   - `Missions.csv`: Missions(id,day,starting_period,ending_period,Skill,Specialty)
 
-## Requirements
-- [Cmake](https://cmake.org/)
+
 
 ## Build (Linux only)
+### Requirements
+- [Cmake](https://cmake.org/)
+
+### Build and run with bash script
+```bash
+bash build.sh
+bash run.sh <options>
+```
+Exemple of usage of ```run.sh``` script :
+```bash
+bash run.sh -i 100000 -p 100 0.7 0.3 ../instances/96-6/Distances.csv ../instances/96-6/Intervenants.csv ../instances/96-6/Missions.csv
+```
+
+### Build with Cmake
+
 ```bash
 mkdir build
 cd build
 cmake ..
+make
+```
+
+### Build with Make (Without Cmake)
+```bash
 make
 ```
 
@@ -34,7 +53,9 @@ make
 cd build
 ./it45-operation-research [options] <distance_file> <employee_file> <mission_file>
 ```
+
 ### Options
+All of theses options are compatible together except h
 - Genetic algorithm options:
     ```bash
   ./it45-operation-research -p arg1 arg2 arg2 <distance_file> <employee_file> <mission_file>
@@ -46,9 +67,20 @@ cd build
   ./it45-operation-research -i arg4 <distance_file> <employee_file> <mission_file>
     ```
     >`arg4` = iteration number
+
+- execution time option:
+    ```bash
+  ./it45-operation-research -t arg5 <distance_file> <employee_file> <mission_file>
+    ```
+    >`arg5` = max time of execution
+
 - utililies options:
     ```bash
-  ./it45-operation-research -v -h <distance_file> <employee_file> <mission_file>
+  ./it45-operation-research -v <distance_file> <employee_file> <mission_file>
     ```
     >-v = verbose mode <br>
-    >-h = help message
+  
+  ```bash
+  ./it45-operation-research -h
+  ```
+  >-h = help message
