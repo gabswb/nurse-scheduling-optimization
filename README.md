@@ -51,7 +51,7 @@ make
 
 ## Usage
 ```bash
- Usage: ./prog [options] <distance_file> <employee_file> <mission_file>
+ Usage: ./nsp-solver [options] <distance_file> <employee_file> <mission_file>
 ```
 ```bash
  options:
