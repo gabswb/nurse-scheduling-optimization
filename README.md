@@ -50,7 +50,6 @@ make
 ```
 
 ## Usage
-### Run
 ```bash
  Usage: ./prog [options] <distance_file> <employee_file> <mission_file>
 ```
