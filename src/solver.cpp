@@ -52,7 +52,9 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
             replacement_roulette_selection(population, child1, generator);
             replacement_roulette_selection(population, child2, generator);
         }
-        //display_fitness(population, fitness_average);
+
+        if(verbose)
+            display_fitness(population, fitness_average);
     }
 
     std::sort(population, population + population_size, employees_fitness_comparator);
@@ -67,10 +69,12 @@ Chromosome genetic_algorithm(const Mission missions[], const Employee employees[
     std::sort(filtred_population, filtred_population + new_pop_size, sessad_fitness_comparator);
     Chromosome result = filtred_population[0];
 
-    if (n_iteration > max_iteration_number)
-        std::cout << "Max iteration number reached" << std::endl;
-    else
-        std::cout << "Max execution time reached" << std::endl;
+    if(verbose){
+        if (n_iteration > max_iteration_number)
+            std::cout << "Max iteration number reached" << std::endl;
+        else
+            std::cout << "Max execution time reached" << std::endl;
+    }
 
     delete[] population;
     return result;
@@ -217,16 +221,16 @@ void mutate_rand_swap(Chromosome *chromosome, std::default_random_engine &genera
 
     while (!mutated && attempt < MAX_MUTATION_ATTEMPT)
     {
-        /* Generator random day, random start minute and select random employees with same skill */
+        /* Generator random day and random start minutes */
         day = random_day(generator);
         start_minute = random_start_minute(generator);
+        
+        /* select random employees with same skill */
         employee1 = random_employee(generator);
         count = 0;
-
         do
         {
             employee2 = random_employee(generator);
-            // std::cout << " " << employee1 << "->" << employee2 << " " << chromosome->employees[employee1].skill << "->" << chromosome->employees[employee2].skill << std::endl;
             if (count > 100)
                 error = true;
             ++count;
@@ -235,15 +239,11 @@ void mutate_rand_swap(Chromosome *chromosome, std::default_random_engine &genera
 
         if (!error)
         {
-            /* Verbose */
-            // std::cout << "Mutation Exchange day " << day << "form hour" << start_minute/60 <<  "\n";
-            // chromosome->print_employee_timetable(employee1);
-            // chromosome->print_employee_timetable(employee2);
-
+            /* Backup missions after start_minute */
             std::vector<Gene> employee1_timetable_day_j = chromosome->employee_timetables[employee1 * N_WEEK_DAY + day];
             std::vector<Gene> employee2_timetable_day_j = chromosome->employee_timetables[employee2 * N_WEEK_DAY + day];
 
-            /* Swap missions starting after start_minute */
+            /* Get missions starting after start_minute */
             std::vector<Gene> employee1_missions, employee2_missions;
 
             for (i = 0; i < employee1_timetable_day_j.size(); ++i)

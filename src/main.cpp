@@ -59,19 +59,20 @@ int main(int argc, char *argv[])
     std::default_random_engine generator(rd());
 
     
-    benchmark(missions, employees, distances, generator, std::chrono::steady_clock::now());
+    // benchmark(missions, employees, distances, generator, std::chrono::steady_clock::now());
+    
     // /* Solving problem */
-    // auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
-    // Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
-    // auto end_exec = std::chrono::steady_clock::now();
+    auto begin_exec = std::chrono::steady_clock::now(); // benchmark algorithm's execution time
+    Chromosome solution = genetic_algorithm(missions, employees, distances, generator, begin_exec);
+    auto end_exec = std::chrono::steady_clock::now();
     
     
-    // std::chrono::duration<double> diff = end_exec - begin_exec;
-    // std::cout << "\nFinal solution :\n" << solution
-    //           << "Execution time : " << diff.count() << "s"
-    //           << "\nEmployee fitness = "<< solution.evaluate_employees()
-    //           << "\nClient fitness = " << solution.evaluate_clients()
-    //           << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
+    std::chrono::duration<double> diff = end_exec - begin_exec;
+    std::cout << "\nFinal solution :\n" << solution
+              << "Execution time : " << diff.count() << "s"
+              << "\nEmployee fitness = "<< solution.evaluate_employees()
+              << "\nClient fitness = " << solution.evaluate_clients()
+              << "\nSESSAD fitness = " << solution.evaluate_sessad() << std::endl;
 
 
     delete[] missions;
