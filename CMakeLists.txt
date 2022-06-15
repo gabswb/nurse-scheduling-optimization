@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(it45-operation-research VERSION 0.1.0)
+project(nsp-solver VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
@@ -30,7 +30,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
-add_executable(it45-operation-research src/main.cpp ${SOURCES} ${HEADERS})
+add_executable(nsp-solver src/main.cpp ${SOURCES} ${HEADERS})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
